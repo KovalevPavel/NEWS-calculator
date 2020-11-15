@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <import type="android.view.View" />
+
+        <variable
+            name="inputEvalParameter"
+            type="com.github.ambulance10.EvalParameter" />
+    </data>
+
+    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="?attr/selectableItemBackground"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:gravity="center_vertical"
+            android:text="@{inputEvalParameter.parameterName}"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            tools:text="Частота сердечных сокращений" />
+
+        <TextView
+            android:id="@+id/textViewEvalPoints"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            tools:text="90  Инсуф" />
+
+        <TextView
+            android:id="@+id/textViewDiseasePoints"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="end|center"
+            android:text="0"
+            android:textColor="@{textViewDiseasePoints.text.toString().contentEquals(`0`) ? @color/green : @color/red}"
+            android:textSize="20sp"
+            tools:text="3" />
+    </LinearLayout>
+</layout>

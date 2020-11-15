@@ -1,0 +1,136 @@
+[
+  {
+    "name": "Частота дыхания за 1 минуту:",
+    "normalValue": 16,
+    "arrayOFLevels": [
+      0,
+      8,
+      9,
+      11,
+      12,
+      20,
+      21,
+      24,
+      25,
+      100
+    ],
+    "arrayOfMarks": [
+      3,
+      1,
+      0,
+      2,
+      3
+    ],
+    "maxCheckableValue": 0
+  },
+  {
+    "name": "Насыщенноть крови кислородом, %:",
+    "normalValue": 100,
+    "arrayOFLevels": [
+      0,
+      91,
+      92,
+      93,
+      94,
+      95,
+      96,
+      100
+    ],
+    "arrayOfMarks": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "maxCheckableValue": 0,
+    "spMark": "Инсуфляция кислорода"
+  },
+  {
+    "name": "Температура тела:",
+    "normalValue": 36.6,
+    "arrayOFLevels": [
+      0,
+      35,
+      35.1,
+      36,
+      36.1,
+      38,
+      38.1,
+      39,
+      39.1,
+      43
+    ],
+    "arrayOfMarks": [
+      3,
+      1,
+      0,
+      1,
+      2
+    ],
+    "maxCheckableValue": 0
+  },
+  {
+    "name": "Систолическое артериальное давление:",
+    "normalValue": 120,
+    "arrayOFLevels": [
+      0,
+      90,
+      91,
+      100,
+      101,
+      110,
+      111,
+      219,
+      220,
+      300
+    ],
+    "arrayOfMarks": [
+      3,
+      2,
+      1,
+      0,
+      3
+    ],
+    "maxCheckableValue": 0
+  },
+  {
+    "name": "Частота сердечных сокращений за 1 минуту:",
+    "normalValue": 70,
+    "arrayOFLevels": [
+      40,
+      41,
+      50,
+      51,
+      90,
+      91,
+      110,
+      111,
+      130,
+      131,
+      400
+    ],
+    "arrayOfMarks": [
+      3,
+      1,
+      0,
+      1,
+      2,
+      3
+    ],
+    "maxCheckableValue": 0
+  },
+  {
+    "name": "Изменение уровня сознания",
+    "normalValue": 0,
+    "arrayOFLevels": [
+      0,
+      1
+    ],
+    "arrayOfMarks": [
+      0,
+      3
+    ],
+    "maxCheckableValue": 3,
+    "spMark": "Изменение уровня сознания"
+  }
+]

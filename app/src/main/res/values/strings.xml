@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">NEWS checkout</string>
+    <string name="commonHealth">Общее состояние пациента:</string>
+</resources>
