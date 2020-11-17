@@ -51,8 +51,6 @@ class EvalRepository {
             )
         } catch (e: JSONException) {
             JSONArray("[]")
-        } finally {
-            res.assets.close()
         }
     }
 
@@ -74,7 +72,10 @@ class EvalRepository {
             obj.getString(SPECIAL_MARK)
         } catch (e: JSONException) {
             null
-        }
+        },
+        evalValue = 0.0,
+        diseasePoints = 0,
+        diseaseBooleanPoints = 0
     )
 
     private fun getDoubleArrayFromJSON(obj: JSONArray): Array<Double> {

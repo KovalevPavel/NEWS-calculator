@@ -49,6 +49,7 @@ class EvalViewModel(application: Application) : AndroidViewModel(application) {
         val temp2 = tempDiseasePointsList[1].toMutableList()
         temp2[position] =
             repository.calculateBooleanLevel(evalParametersList[position], inputBooleanValue)
+
         diseasePointsList.postValue(listOf(temp1, temp2))
 
         //позиция была введена

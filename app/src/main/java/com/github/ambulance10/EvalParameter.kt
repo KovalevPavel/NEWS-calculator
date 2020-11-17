@@ -10,5 +10,8 @@ data class EvalParameter(
     val arrayOfEvalLevels: Array<Double>,
     val arrayOfDiseasePoints: Array<Int>,
     val maxCheckableValue: Int = 0,
-    val specialMark: String? = null
+    val specialMark: String? = null,
+    var evalValue: Double,
+    var diseasePoints: Int,
+    var diseaseBooleanPoints: Int
 ): Parcelable

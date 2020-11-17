@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nar_res"
-    app:startDestination="@id/checkListFragment2">
+    app:startDestination="@id/checkListFragment">
     <fragment
-        android:id="@+id/checkListFragment2"
+        android:id="@+id/checkListFragment"
         android:name="com.github.ambulance10.CheckListFragment"
         android:label="CheckListFragment"
         tools:layout="@layout/fragment_checklist">
@@ -19,7 +19,7 @@
         android:label="EditValueDialog"
         tools:layout="@layout/dialog_editvalue">
         <argument
-            android:name="editValueID"
-            app:argType="integer" />
+            android:name="inputEvalParameter"
+            app:argType="com.github.ambulance10.EvalParameter" />
     </dialog>
 </navigation>

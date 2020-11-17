@@ -40,6 +40,8 @@
             android:id="@+id/editTextNumberSigned"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
+            android:windowSoftInputMode="stateAlwaysVisible"
+            android:focusable="true"
             android:layout_marginTop="16dp"
             android:inputType="numberDecimal"
             android:visibility="@{inputData.specialMark.contentEquals(`Изменение уровня сознания`) ? View.GONE : View.VISIBLE}"
