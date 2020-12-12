@@ -1,17 +1,19 @@
-package com.github.ambulance10
+package com.github.newscalculator
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
-import android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE
+import android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.navArgs
-import com.github.ambulance10.databinding.DialogEditvalueBinding
+import com.github.newscalculator.databinding.DialogEditvalueBinding
+import kotlinx.android.synthetic.main.dialog_editvalue.*
 import kotlinx.android.synthetic.main.dialog_editvalue.view.*
 
 
@@ -40,12 +42,14 @@ class EditValueDialog : DialogFragment() {
         binder.inputData = inputEvalParameter
     }
 
+    @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
         binder.root.editTextNumberSigned.addTextChangedListener(textWatcher)
 
         return AlertDialog.Builder(requireContext())
             .setView(binder.root)
+            .setCustomTitle(LayoutInflater.from(requireContext()).inflate(R.layout.dialog_title, null))
             .setPositiveButton("OK") { _, _ ->
 
                 with(binder.root) {
@@ -68,6 +72,16 @@ class EditValueDialog : DialogFragment() {
             .create()
     }
 
+    override fun onResume() {
+        super.onResume()
+        dialog?.let {
+            it.editTextNumberSigned.setText(convertEvalValue(inputEvalParameter))
+            it.editTextNumberSigned?.requestFocus()
+            it.editTextNumberSigned.setSelection(0, it.editTextNumberSigned.text.length)
+            it.window?.setSoftInputMode(SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        }
+    }
+
     private val textWatcher = object : TextWatcher {
         override fun beforeTextChanged(
             s: CharSequence?,
@@ -83,7 +97,7 @@ class EditValueDialog : DialogFragment() {
                 val enteredValue = try {
                     s.toString().toDouble()
                 } catch (e: NumberFormatException) {
-                    (-1).toDouble()
+                    0.0
                 }
                 switchEvalBooleanParameter.isEnabled =
                     if (switchEvalBooleanParameter.isVisible && enteredValue != (-1).toDouble()) enteredValue < (94.toDouble()) else false
@@ -94,9 +108,17 @@ class EditValueDialog : DialogFragment() {
     }
 
     private fun Double.truncation(): Double {
-        val tempInt = this.toInt()
-        return if (this - tempInt == 0.0) this else
-            "$tempInt.${((this - tempInt) * 10).toInt()}".toDouble()
+        val dotPosition = this.toString().toCharArray().indexOfFirst {
+            it == '.'
+        }
+        return this.toString().substring(0,dotPosition+2).toDouble()
     }
 
+    private fun convertEvalValue(item: EvalParameter?) =
+        item?.measuredValue?.let {
+            when (item.normalValue) {
+                36.6 -> if (it==0.0) "" else it.toString()
+                else -> if (it == 0.0) "" else it.toInt().toString()
+            }
+        } ?: ""
 }

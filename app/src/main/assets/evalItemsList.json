@@ -1,5 +1,6 @@
 [
   {
+    "id": 0,
     "name": "Частота дыхания за 1 минуту:",
     "normalValue": 16,
     "arrayOFLevels": [
@@ -24,7 +25,8 @@
     "maxCheckableValue": 0
   },
   {
-    "name": "Насыщенноть крови кислородом, %:",
+    "id": 1,
+    "name": "Насыщенность крови кислородом, %:",
     "normalValue": 100,
     "arrayOFLevels": [
       0,
@@ -46,6 +48,7 @@
     "spMark": "Инсуфляция кислорода"
   },
   {
+    "id": 2,
     "name": "Температура тела:",
     "normalValue": 36.6,
     "arrayOFLevels": [
@@ -70,6 +73,7 @@
     "maxCheckableValue": 0
   },
   {
+    "id": 3,
     "name": "Систолическое артериальное давление:",
     "normalValue": 120,
     "arrayOFLevels": [
@@ -94,6 +98,7 @@
     "maxCheckableValue": 0
   },
   {
+    "id": 4,
     "name": "Частота сердечных сокращений за 1 минуту:",
     "normalValue": 70,
     "arrayOFLevels": [
@@ -120,6 +125,7 @@
     "maxCheckableValue": 0
   },
   {
+    "id": 5,
     "name": "Изменение уровня сознания",
     "normalValue": 0,
     "arrayOFLevels": [

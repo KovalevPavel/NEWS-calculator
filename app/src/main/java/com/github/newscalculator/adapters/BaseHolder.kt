@@ -1,4 +1,4 @@
-package com.github.ambulance10.adapters
+package com.github.newscalculator.adapters
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView

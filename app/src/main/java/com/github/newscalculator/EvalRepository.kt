@@ -1,6 +1,7 @@
-package com.github.ambulance10
+package com.github.newscalculator
 
 import android.content.res.Resources
+import android.util.Log
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -8,6 +9,7 @@ import org.json.JSONObject
 class EvalRepository {
 
     companion object {
+        private const val ID = "id"
         private const val NAME = "name"
         private const val NORM_VALUE = "normalValue"
         private const val ARRAY_LEVELS = "arrayOFLevels"
@@ -18,13 +20,18 @@ class EvalRepository {
         private const val CONSCIOUS_CHANGE = 3
     }
 
-    fun calculateLevel(item: EvalParameter, inputParameter: Double): Int {
-        return if (inputParameter == (-1).toDouble()) 0
+    fun calculateLevel(item: EvalParameter, inputParameter: Double?): Int {
+        val measuredValue = when (inputParameter) {
+            null -> null
+            else -> if (item.id != 2) inputParameter.toInt().toDouble() else inputParameter
+        }
+        Log.d("ZAWARUDO", "inputValue: $inputParameter; measuredValue: $measuredValue")
+        return if (measuredValue == null) 0
         else {
             val minIndex =
                 item.arrayOfEvalLevels.indexOfFirst {
                     item.arrayOfEvalLevels.indexOf(it) % 2 == 1 &&
-                            inputParameter <= it
+                            measuredValue <= it
                 }
             if (minIndex > 0) item.arrayOfDiseasePoints[(minIndex - 1) / 2] else item.arrayOfDiseasePoints[item.arrayOfDiseasePoints.lastIndex]
         }
@@ -36,12 +43,6 @@ class EvalRepository {
             "Изменение уровня сознания" -> if (inputValue) CONSCIOUS_CHANGE else 0
             else -> 0
         }
-
-    fun generateEmptyDiseasePointsList(inputEvalParametersList: MutableList<EvalParameter>): List<Int> =
-        List(inputEvalParametersList.size) { 0 }
-
-    fun generateBooleanList(inputEvalParametersList: MutableList<EvalParameter>): List<Boolean> =
-        MutableList(inputEvalParametersList.size) { false }
 
     private fun readDataFromJSON(res: Resources): JSONArray {
         return try {
@@ -63,6 +64,7 @@ class EvalRepository {
     }
 
     private fun convertJSONToEval(obj: JSONObject) = EvalParameter(
+        id = obj.getInt(ID),
         parameterName = obj.getString(NAME),
         normalValue = obj.getDouble(NORM_VALUE),
         arrayOfEvalLevels = getDoubleArrayFromJSON(obj.getJSONArray(ARRAY_LEVELS)),
@@ -73,7 +75,7 @@ class EvalRepository {
         } catch (e: JSONException) {
             null
         },
-        evalValue = 0.0,
+        measuredValue = null,
         diseasePoints = 0,
         diseaseBooleanPoints = 0
     )

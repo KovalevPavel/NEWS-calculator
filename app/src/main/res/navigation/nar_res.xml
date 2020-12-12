@@ -6,7 +6,7 @@
     app:startDestination="@id/checkListFragment">
     <fragment
         android:id="@+id/checkListFragment"
-        android:name="com.github.ambulance10.CheckListFragment"
+        android:name="com.github.newscalculator.CheckListFragment"
         android:label="CheckListFragment"
         tools:layout="@layout/fragment_checklist">
         <action
@@ -15,11 +15,11 @@
     </fragment>
     <dialog
         android:id="@+id/editValueDialog"
-        android:name="com.github.ambulance10.EditValueDialog"
+        android:name="com.github.newscalculator.EditValueDialog"
         android:label="EditValueDialog"
         tools:layout="@layout/dialog_editvalue">
         <argument
             android:name="inputEvalParameter"
-            app:argType="com.github.ambulance10.EvalParameter" />
+            app:argType="com.github.newscalculator.EvalParameter" />
     </dialog>
 </navigation>

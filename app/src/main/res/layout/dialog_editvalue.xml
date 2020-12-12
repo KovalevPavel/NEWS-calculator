@@ -1,69 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <import type="android.view.View" />
 
-        <import type="java.util.function.ToDoubleFunction" />
-
-        <import type="androidx.databinding.adapters.Converters" />
-
         <variable
             name="inputData"
-            type="com.github.ambulance10.EvalParameter" />
+            type="com.github.newscalculator.EvalParameter" />
 
         <variable
             name="textWatcher"
             type="kotlin.Unit" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
 
         <TextView
             android:id="@+id/textDialogParameterName"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@{inputData.parameterName}"
             android:textColor="@color/black"
             android:textSize="18sp"
+            android:textAlignment="viewStart"
+            android:visibility="@{inputData.id==5 ? View.GONE : View.VISIBLE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Частота сердечных сокращений в минуту:" />
+            tools:text="Насыщенность крови кислородом, %:" />
 
         <EditText
             android:id="@+id/editTextNumberSigned"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:windowSoftInputMode="stateAlwaysVisible"
-            android:focusable="true"
-            android:layout_marginTop="16dp"
+            android:hint="@{inputData.id==2 ? `36.6` : Double.toString(inputData.normalValue).substring(0,Double.toString(inputData.normalValue).indexOf(`.`))}"
+            android:layout_marginTop="12dp"
             android:inputType="numberDecimal"
+            android:maxLength="4"
+            android:textAlignment="center"
             android:visibility="@{inputData.specialMark.contentEquals(`Изменение уровня сознания`) ? View.GONE : View.VISIBLE}"
-            app:layout_constraintEnd_toEndOf="@id/textDialogParameterName"
-            app:layout_constraintStart_toStartOf="@id/textDialogParameterName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textDialogParameterName"
             tools:ignore="Autofill,LabelFor"
             tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="32dp"
-            android:maxLength="4"
-            android:textAlignment="center"/>
+            tools:layout_editor_absoluteY="32dp" />
 
         <Switch
             android:id="@+id/switchEvalBooleanParameter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             android:enabled="@{inputData.specialMark.contentEquals(`Изменение уровня сознания`) ? true : false}"
             android:text="@{inputData.specialMark+`:`}"
             android:visibility="@{inputData.specialMark==null ? View.GONE : View.VISIBLE}"
-            app:layout_constraintEnd_toEndOf="@id/textDialogParameterName"
-            app:layout_constraintStart_toStartOf="@id/textDialogParameterName"
+            app:layout_constraintEnd_toEndOf="@id/editTextNumberSigned"
+            app:layout_constraintStart_toStartOf="@id/editTextNumberSigned"
             app:layout_constraintTop_toBottomOf="@id/editTextNumberSigned"
             tools:ignore="UseSwitchCompatOrMaterialXml"
             tools:text="Инсуффляция кислорода:" />

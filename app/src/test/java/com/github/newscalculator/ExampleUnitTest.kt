@@ -1,4 +1,4 @@
-package com.github.ambulance10
+package com.github.newscalculator
 
 import org.junit.Test
 

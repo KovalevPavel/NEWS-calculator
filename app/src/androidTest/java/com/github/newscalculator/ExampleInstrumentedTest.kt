@@ -1,4 +1,4 @@
-package com.github.ambulance10
+package com.github.newscalculator
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
