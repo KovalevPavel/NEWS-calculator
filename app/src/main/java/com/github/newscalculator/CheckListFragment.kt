@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.newscalculator.adapters.EvalAdapter
@@ -17,8 +18,9 @@ class CheckListFragment : androidx.fragment.app.Fragment(R.layout.fragment_check
     ConnectionToDialog {
     private var evalAdapter by AutoClearedValue<EvalAdapter>()
     private lateinit var evalViewModel: EvalViewModel
+    override var allowToCallDialog = true
 
-    private lateinit var binder: FragmentChecklistBinding
+    lateinit var binder: FragmentChecklistBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,7 +51,8 @@ class CheckListFragment : androidx.fragment.app.Fragment(R.layout.fragment_check
             val tempList = evalAdapter.items.toMutableList()
             tempList[newItem.id] = newItem
             evalAdapter.items = tempList
-            binder.root.clearFAB.isVisible = evalViewModel.getListOfCurrentParameters.find { it != null } != null
+            binder.root.clearFAB.isVisible =
+                evalViewModel.getListOfCurrentParameters.find { it != null } != null
             evalAdapter.notifyItemChanged(newItem.id)
             evalViewModel.changeSum()
         }
@@ -77,7 +80,10 @@ class CheckListFragment : androidx.fragment.app.Fragment(R.layout.fragment_check
     private fun translateItemIdIntoDialog(id: Int) {
         val action =
             CheckListFragmentDirections.actionCheckListFragmentToEditValueDialog(evalAdapter.items[id])
-        findNavController().navigate(action)
+        if (allowToCallDialog) {
+            allowToCallDialog = false
+            findNavController().navigate(action)
+        }
     }
 
     private fun makeEvalColor(inputParam: Int, everythingIsEntered: Boolean = false) {

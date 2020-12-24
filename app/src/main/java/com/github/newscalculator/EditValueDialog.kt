@@ -49,9 +49,10 @@ class EditValueDialog : DialogFragment() {
 
         return AlertDialog.Builder(requireContext())
             .setView(binder.root)
-            .setCustomTitle(LayoutInflater.from(requireContext()).inflate(R.layout.dialog_title, null))
+            .setCustomTitle(
+                LayoutInflater.from(requireContext()).inflate(R.layout.dialog_title, null)
+            )
             .setPositiveButton("OK") { _, _ ->
-
                 with(binder.root) {
                     val isSwitchChecked = switchEvalBooleanParameter.isChecked
                     inputEvalParameter?.let {
@@ -75,11 +76,18 @@ class EditValueDialog : DialogFragment() {
     override fun onResume() {
         super.onResume()
         dialog?.let {
-            it.editTextNumberSigned.setText(convertEvalValue(inputEvalParameter))
-            it.editTextNumberSigned?.requestFocus()
-            it.editTextNumberSigned.setSelection(0, it.editTextNumberSigned.text.length)
-            it.window?.setSoftInputMode(SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+            if (args.inputEvalParameter.id != 5) {
+                it.editTextNumberSigned.setText(convertEvalValue(inputEvalParameter))
+                it.editTextNumberSigned?.requestFocus()
+                it.editTextNumberSigned.setSelection(0, it.editTextNumberSigned.text.length)
+                it.window?.setSoftInputMode(SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+            }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        parentEntity.allowToCallDialog = true
     }
 
     private val textWatcher = object : TextWatcher {
@@ -111,13 +119,13 @@ class EditValueDialog : DialogFragment() {
         val dotPosition = this.toString().toCharArray().indexOfFirst {
             it == '.'
         }
-        return this.toString().substring(0,dotPosition+2).toDouble()
+        return this.toString().substring(0, dotPosition + 2).toDouble()
     }
 
     private fun convertEvalValue(item: EvalParameter?) =
         item?.measuredValue?.let {
             when (item.normalValue) {
-                36.6 -> if (it==0.0) "" else it.toString()
+                36.6 -> if (it == 0.0) "" else it.toString()
                 else -> if (it == 0.0) "" else it.toInt().toString()
             }
         } ?: ""
