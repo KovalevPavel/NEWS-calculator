@@ -1,71 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
 
-    <data>
-
-        <import type="android.view.View" />
-
-        <variable
-            name="inputData"
-            type="com.github.newscalculator.EvalParameter" />
-
-        <variable
-            name="textWatcher"
-            type="kotlin.Unit" />
-    </data>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/textDialogParameterName"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp">
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Насыщенность крови кислородом, %:" />
 
-        <TextView
-            android:id="@+id/textDialogParameterName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@{inputData.parameterName}"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textAlignment="viewStart"
-            android:visibility="@{inputData.id==5 ? View.GONE : View.VISIBLE}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Насыщенность крови кислородом, %:" />
+    <EditText
+        android:id="@+id/editTextNumberSigned"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:inputType="numberDecimal"
+        android:maxLength="4"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textDialogParameterName"
+        tools:ignore="Autofill,LabelFor"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="32dp" />
 
-        <EditText
-            android:id="@+id/editTextNumberSigned"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:hint="@{inputData.id==2 ? `36.6` : Double.toString(inputData.normalValue).substring(0,Double.toString(inputData.normalValue).indexOf(`.`))}"
-            android:layout_marginTop="12dp"
-            android:inputType="numberDecimal"
-            android:maxLength="4"
-            android:textAlignment="center"
-            android:visibility="@{inputData.specialMark.contentEquals(`Изменение уровня сознания`) ? View.GONE : View.VISIBLE}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textDialogParameterName"
-            tools:ignore="Autofill,LabelFor"
-            tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="32dp" />
+    <Switch
+        android:id="@+id/switchEvalBooleanParameter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="@id/editTextNumberSigned"
+        app:layout_constraintStart_toStartOf="@id/editTextNumberSigned"
+        app:layout_constraintTop_toBottomOf="@id/editTextNumberSigned"
+        tools:ignore="UseSwitchCompatOrMaterialXml"
+        tools:text="Инсуффляция кислорода:" />
 
-        <Switch
-            android:id="@+id/switchEvalBooleanParameter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:enabled="@{inputData.specialMark.contentEquals(`Изменение уровня сознания`) ? true : false}"
-            android:text="@{inputData.specialMark+`:`}"
-            android:visibility="@{inputData.specialMark==null ? View.GONE : View.VISIBLE}"
-            app:layout_constraintEnd_toEndOf="@id/editTextNumberSigned"
-            app:layout_constraintStart_toStartOf="@id/editTextNumberSigned"
-            app:layout_constraintTop_toBottomOf="@id/editTextNumberSigned"
-            tools:ignore="UseSwitchCompatOrMaterialXml"
-            tools:text="Инсуффляция кислорода:" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+</androidx.constraintlayout.widget.ConstraintLayout>

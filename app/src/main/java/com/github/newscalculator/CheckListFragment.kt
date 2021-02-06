@@ -6,21 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.newscalculator.adapters.EvalAdapter
 import com.github.newscalculator.databinding.FragmentChecklistBinding
-import kotlinx.android.synthetic.main.fragment_checklist.*
-import kotlinx.android.synthetic.main.fragment_checklist.view.*
 
-class CheckListFragment : androidx.fragment.app.Fragment(R.layout.fragment_checklist),
-    ConnectionToDialog {
-    private var evalAdapter by AutoClearedValue<EvalAdapter>()
-    private lateinit var evalViewModel: EvalViewModel
-    override var allowToCallDialog = true
-
+class CheckListFragment : Fragment(), ConnectionToDialog {
     lateinit var binder: FragmentChecklistBinding
+    private var evalAdapter by AutoClearedValue<EvalAdapter>()
+    private val evalViewModel: EvalViewModel by viewModels()
+
+    override var allowToCallDialog = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,67 +32,76 @@ class CheckListFragment : androidx.fragment.app.Fragment(R.layout.fragment_check
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        initUI()
+        bindViewModel()
+        loadData()
+    }
 
-        evalViewModel = EvalViewModel(requireActivity().application)
-
-        binder.root.clearFAB.isVisible = false
-
+    private fun initUI() {
         evalAdapter = EvalAdapter { position -> translateItemIdIntoDialog(position) }
 
-
-        evalViewModel.getCommonPoints.observe(viewLifecycleOwner) { newCommonPoints ->
-            binder.root.textViewResult.text =
-                if (evalViewModel.isEverythingIsEntered) "$newCommonPoints/19" else "__ /19"
-            makeEvalColor(newCommonPoints, evalViewModel.isEverythingIsEntered)
-        }
-
-        evalViewModel.getEditingParameter.observe(viewLifecycleOwner) { newItem ->
-            val tempList = evalAdapter.items.toMutableList()
-            tempList[newItem.id] = newItem
-            evalAdapter.items = tempList
-            binder.root.clearFAB.isVisible =
-                evalViewModel.getListOfCurrentParameters.find { it != null } != null
-            evalAdapter.notifyItemChanged(newItem.id)
-            evalViewModel.changeSum()
-        }
-
-
-        evalAdapter.items = evalViewModel.getEvalParametersList
-
-        recView.apply {
+        binder.recView.apply {
             adapter = evalAdapter
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)
             addItemDecoration(Decoration(requireContext()))
         }
 
-        binder.root.clearFAB.setOnClickListener {
-            evalAdapter.items.forEach {
-                evalViewModel.changeInputValue(it, null, false)
-//                Log.d("ZAWARUDO", "${it.id} is OK")
-                evalAdapter.notifyItemChanged(evalAdapter.items.indexOf(it))
+        binder.clearFAB.setOnClickListener {
+            loadData()
+        }
+    }
+
+    private fun resetUI() {
+        binder.clearFAB.isVisible = false
+        binder.textViewResult.text = "__/19"
+        makeEvalColor(20)
+    }
+
+    private fun loadData() {
+        evalViewModel.getEvalList(this.resources)
+    }
+
+    private fun bindViewModel() {
+        evalViewModel.apply {
+            getEvalParametersList.observe(viewLifecycleOwner) { newList ->
+                resetUI()
+                evalAdapter.diseaseList = newList
+                evalAdapter.notifyDataSetChanged()
             }
-//            Log.d("ZAWARUDO", "${ evalViewModel.getListOfCurrentParameters }")
+
+            getChangedParameter.observe(viewLifecycleOwner) { changedParameter ->
+                if (!binder.clearFAB.isVisible) binder.clearFAB.isVisible = true
+                val position = changedParameter.id
+                evalAdapter.diseaseList[position] = changedParameter
+                evalAdapter.notifyItemChanged(position)
+                evalViewModel.checkEverythingIsChanged()
+                evalViewModel.countSum()
+            }
+
+            getEverythingIsEntered.observe(viewLifecycleOwner) { newSum ->
+                binder.textViewResult.text = "$newSum/19"
+                makeEvalColor(newSum)
+            }
         }
     }
 
     private fun translateItemIdIntoDialog(id: Int) {
-        val action =
-            CheckListFragmentDirections.actionCheckListFragmentToEditValueDialog(evalAdapter.items[id])
         if (allowToCallDialog) {
             allowToCallDialog = false
+            val action =
+                CheckListFragmentDirections.actionCheckListFragmentToEditValueDialog(evalAdapter.diseaseList[id])
             findNavController().navigate(action)
         }
     }
 
-    private fun makeEvalColor(inputParam: Int, everythingIsEntered: Boolean = false) {
-        var color = when (inputParam) {
+    private fun makeEvalColor(inputParam: Int) {
+        val color = when (inputParam) {
             in (0 until 3) -> R.color.green
             in (3 until 6) -> R.color.yellow
             else -> R.color.red
         }
-        if (!everythingIsEntered) color = R.color.red
-        textViewResult.setTextColor(
+        binder.textViewResult.setTextColor(
             ResourcesCompat.getColor(resources, color, null)
         )
     }
@@ -104,6 +112,5 @@ class CheckListFragment : androidx.fragment.app.Fragment(R.layout.fragment_check
         measuredIsChecked: Boolean
     ) {
         evalViewModel.changeInputValue(evalParameter, measuredValue, measuredIsChecked)
-//        Log.d("ZAWARUDO", "measuredValue = $measuredValue, measuredChecked = $measuredIsChecked")
     }
 }

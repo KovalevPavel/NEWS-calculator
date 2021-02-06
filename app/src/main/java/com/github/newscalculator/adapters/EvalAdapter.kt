@@ -1,21 +1,25 @@
 package com.github.newscalculator.adapters
 
-import androidx.recyclerview.widget.DiffUtil
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.github.newscalculator.EvalParameter
-import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
+import com.github.newscalculator.databinding.ItemEvaluationParameterBinding
 
-class EvalAdapter (onItemClick: (Int) -> Unit) :
-    AsyncListDifferDelegationAdapter<EvalParameter>(EvalDiffUtilCallback()) {
+class EvalAdapter(private val onItemClick: (Int) -> Unit) :
+    RecyclerView.Adapter<DiseaseHolder>() {
+    private lateinit var binder: ItemEvaluationParameterBinding
+    var diseaseList = mutableListOf<EvalParameter>()
 
-    init {
-        delegatesManager.addDelegate(DiseaseDelegateAdapter(onItemClick))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiseaseHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        binder = ItemEvaluationParameterBinding.inflate(inflater, parent, false)
+        return DiseaseHolder(binder, onItemClick)
     }
 
-    class EvalDiffUtilCallback : DiffUtil.ItemCallback<EvalParameter>() {
-        override fun areItemsTheSame(oldItem: EvalParameter, newItem: EvalParameter) =
-            oldItem.id == newItem.id
-
-        override fun areContentsTheSame(oldItem: EvalParameter, newItem: EvalParameter) =
-            oldItem == newItem
+    override fun onBindViewHolder(holder: DiseaseHolder, position: Int) {
+        holder.bind(diseaseList[position])
     }
+
+    override fun getItemCount() = diseaseList.size
 }

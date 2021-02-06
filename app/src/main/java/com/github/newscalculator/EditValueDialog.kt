@@ -1,88 +1,72 @@
 package com.github.newscalculator
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.View
 import android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.navArgs
 import com.github.newscalculator.databinding.DialogEditvalueBinding
-import kotlinx.android.synthetic.main.dialog_editvalue.*
-import kotlinx.android.synthetic.main.dialog_editvalue.view.*
-
+import com.github.newscalculator.databinding.DialogTitleBinding
 
 class EditValueDialog : DialogFragment() {
-
     private val args: EditValueDialogArgs by navArgs()
+    private lateinit var viewBinder: DialogEditvalueBinding
+    private lateinit var titleBinder: DialogTitleBinding
+    private lateinit var textWatcher: MyTextWatcher
+    private lateinit var inputEvalParameter: EvalParameter
 
-    private lateinit var binder: DialogEditvalueBinding
     private val parentEntity: ConnectionToDialog
         get() = activity?.let {
             it as? ConnectionToDialog
         } ?: parentFragmentManager.primaryNavigationFragment as ConnectionToDialog
 
-    private var inputEvalParameter: EvalParameter? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        val inflater = LayoutInflater.from(requireContext())
+        viewBinder = DialogEditvalueBinding.inflate(inflater)
+        titleBinder = DialogTitleBinding.inflate(inflater)
         inputEvalParameter = args.inputEvalParameter
-        binder = DataBindingUtil.inflate(
-            LayoutInflater.from(requireContext()),
-            R.layout.dialog_editvalue,
-            null,
-            false
-        )
-        binder.inputData = inputEvalParameter
+        textWatcher = when (inputEvalParameter.id) {
+            1 -> MyTextWatcher(viewBinder, TextInputType.OXYGEN)
+            2 -> MyTextWatcher(viewBinder, TextInputType.TEMPERATURE)
+            else -> MyTextWatcher(viewBinder, TextInputType.COMMON)
+        }
     }
 
-    @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-
-        binder.root.editTextNumberSigned.addTextChangedListener(textWatcher)
-
+        viewBinder.editTextNumberSigned.addTextChangedListener(textWatcher)
         return AlertDialog.Builder(requireContext())
-            .setView(binder.root)
-            .setCustomTitle(
-                LayoutInflater.from(requireContext()).inflate(R.layout.dialog_title, null)
-            )
+            .setView(viewBinder.root)
+            .setCustomTitle(titleBinder.root)
             .setPositiveButton("OK") { _, _ ->
-                with(binder.root) {
+                viewBinder.apply {
                     val isSwitchChecked = switchEvalBooleanParameter.isChecked
-                    inputEvalParameter?.let {
+                    inputEvalParameter.apply {
                         val evalValue = when (editTextNumberSigned.text.toString()) {
-                            "" -> if (!editTextNumberSigned.isVisible) (-1).toDouble() else it.normalValue
-                            "." -> it.normalValue
+                            "" -> if (!editTextNumberSigned.isVisible) (-1).toDouble() else normalValue
+                            "." -> normalValue
                             else -> editTextNumberSigned.text.toString().toDouble()
                         }
                         parentEntity.onDialogClicked(
-                            it,
+                            this,
                             evalValue.truncation(),
                             isSwitchChecked
                         )
                     }
                 }
-
             }
             .create()
     }
 
     override fun onResume() {
         super.onResume()
-        dialog?.let {
-            if (args.inputEvalParameter.id != 5) {
-                it.editTextNumberSigned.setText(convertEvalValue(inputEvalParameter))
-                it.editTextNumberSigned?.requestFocus()
-                it.editTextNumberSigned.setSelection(0, it.editTextNumberSigned.text.length)
-                it.window?.setSoftInputMode(SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-            }
-        }
+        bindView()
+        if (inputEvalParameter.id != 5)
+            dialog?.window?.setSoftInputMode(SOFT_INPUT_STATE_ALWAYS_VISIBLE)
     }
 
     override fun onDestroy() {
@@ -90,27 +74,26 @@ class EditValueDialog : DialogFragment() {
         parentEntity.allowToCallDialog = true
     }
 
-    private val textWatcher = object : TextWatcher {
-        override fun beforeTextChanged(
-            s: CharSequence?,
-            start: Int,
-            count: Int,
-            after: Int
-        ) = Unit
+    private fun bindView() {
+        viewBinder.apply {
+            textDialogParameterName.text = inputEvalParameter.parameterName
+            editTextNumberSigned.hint =
+                if (inputEvalParameter.id == 2) inputEvalParameter.normalValue.toString()
+                else inputEvalParameter.normalValue.toInt().toString()
+            switchEvalBooleanParameter.text = inputEvalParameter.specialMark
+            switchEvalBooleanParameter.isChecked = inputEvalParameter.diseaseBooleanPoints != 0
 
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+            if (inputEvalParameter.id == 5) {
+                editTextNumberSigned.visibility = View.GONE
+                textDialogParameterName.visibility = View.GONE
+            }
 
-        override fun afterTextChanged(s: Editable?) {
-            with(binder.root) {
-                val enteredValue = try {
-                    s.toString().toDouble()
-                } catch (e: NumberFormatException) {
-                    0.0
-                }
-                switchEvalBooleanParameter.isEnabled =
-                    if (switchEvalBooleanParameter.isVisible && enteredValue != (-1).toDouble()) enteredValue < (94.toDouble()) else false
-                if (!switchEvalBooleanParameter.isEnabled) switchEvalBooleanParameter.isChecked =
-                    false
+            if (!(inputEvalParameter.id == 1 || inputEvalParameter.id == 5))
+                switchEvalBooleanParameter.visibility = View.GONE
+            if (inputEvalParameter.id != 5) {
+                editTextNumberSigned.setText(convertEvalValue(inputEvalParameter))
+                editTextNumberSigned.requestFocus()
+                editTextNumberSigned.setSelection(0, editTextNumberSigned.text.length)
             }
         }
     }

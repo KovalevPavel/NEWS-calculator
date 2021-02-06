@@ -11,7 +11,8 @@
         tools:layout="@layout/fragment_checklist">
         <action
             android:id="@+id/action_checkListFragment_to_editValueDialog"
-            app:destination="@id/editValueDialog" />
+            app:destination="@id/editValueDialog"
+            app:launchSingleTop="true" />
     </fragment>
     <dialog
         android:id="@+id/editValueDialog"
