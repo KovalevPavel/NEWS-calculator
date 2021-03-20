@@ -1,14 +1,15 @@
-package com.github.newscalculator
+package com.github.newscalculator.screens.mainfragment
 
 import android.content.res.Resources
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.newscalculator.EvalParameter
 import kotlinx.coroutines.launch
 
-class EvalViewModel : ViewModel() {
-    private val repository = EvalRepository()
+class MainViewModel : ViewModel() {
+    private val repository = Mainrepository()
 
     //список оцениваемых параметров (строки таблцы NEWS)
     private val evalParametersList = MutableLiveData<MutableList<EvalParameter>>()

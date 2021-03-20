@@ -1,4 +1,4 @@
-package com.github.newscalculator
+package com.github.newscalculator.screens.editvaluedialog
 
 import android.app.Dialog
 import android.os.Bundle
@@ -9,8 +9,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.navArgs
+import com.github.newscalculator.EvalParameter
 import com.github.newscalculator.databinding.DialogEditvalueBinding
 import com.github.newscalculator.databinding.DialogTitleBinding
+import com.github.newscalculator.screens.mainfragment.ConnectionToDialog
 
 class EditValueDialog : DialogFragment() {
     private val args: EditValueDialogArgs by navArgs()

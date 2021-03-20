@@ -1,6 +1,7 @@
-package com.github.newscalculator
+package com.github.newscalculator.screens.mainfragment
 
 import android.content.res.Resources
+import com.github.newscalculator.EvalParameter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import kotlinx.coroutines.Dispatchers
@@ -8,7 +9,7 @@ import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONException
 
-class EvalRepository {
+class Mainrepository {
 
     companion object {
         private const val OXYGEN_INSUFFLATION = 1

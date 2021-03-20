@@ -1,4 +1,4 @@
-package com.github.newscalculator
+package com.github.newscalculator.adapters
 
 import android.content.Context
 import android.graphics.Rect

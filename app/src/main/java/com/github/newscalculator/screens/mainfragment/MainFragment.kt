@@ -1,37 +1,29 @@
-package com.github.newscalculator
+package com.github.newscalculator.screens.mainfragment
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.newscalculator.AutoClearedValue
+import com.github.newscalculator.EvalParameter
+import com.github.newscalculator.FragmentViewBinding
+import com.github.newscalculator.R
+import com.github.newscalculator.adapters.Decoration
 import com.github.newscalculator.adapters.EvalAdapter
-import com.github.newscalculator.databinding.FragmentChecklistBinding
+import com.github.newscalculator.databinding.FragmentMainBinding
 
-class CheckListFragment : Fragment(), ConnectionToDialog {
-    lateinit var binder: FragmentChecklistBinding
+class MainFragment :
+    FragmentViewBinding<FragmentMainBinding>(FragmentMainBinding::inflate),
+    ConnectionToDialog {
     private var evalAdapter by AutoClearedValue<EvalAdapter>()
-    private val evalViewModel: EvalViewModel by viewModels()
+    private val evalViewModel: MainViewModel by viewModels()
 
     override var allowToCallDialog = true
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binder = FragmentChecklistBinding.inflate(inflater)
-        return binder.root
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         initUI()
         bindViewModel()
         loadData()
@@ -90,7 +82,7 @@ class CheckListFragment : Fragment(), ConnectionToDialog {
         if (allowToCallDialog) {
             allowToCallDialog = false
             val action =
-                CheckListFragmentDirections.actionCheckListFragmentToEditValueDialog(evalAdapter.diseaseList[id])
+                MainFragmentDirections.actionCheckListFragmentToEditValueDialog(evalAdapter.diseaseList[id])
             findNavController().navigate(action)
         }
     }

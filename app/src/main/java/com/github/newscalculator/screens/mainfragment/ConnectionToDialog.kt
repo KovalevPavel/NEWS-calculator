@@ -1,4 +1,6 @@
-package com.github.newscalculator
+package com.github.newscalculator.screens.mainfragment
+
+import com.github.newscalculator.EvalParameter
 
 interface ConnectionToDialog {
     var allowToCallDialog: Boolean
