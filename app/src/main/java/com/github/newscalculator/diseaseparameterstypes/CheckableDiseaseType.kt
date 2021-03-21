@@ -12,12 +12,17 @@ data class CheckableDiseaseType(
     override val normalValue: Double,
     val maxCheckableValue: Int,
     override val shortString: String,
+    override val fractional: Boolean,
+    override val required: Boolean,
 ) : AbstractDiseaseType(EvalTypes.Checkable) {
 
     override fun evaluatePoints() {
-        val booleanPoints = if (measuredArray[1] as Boolean) maxCheckableValue else 0
-        resultPointsArray[1] = booleanPoints
+        val booleanPoints = if (getBooleanParameter) maxCheckableValue else 0
+        setBooleanPoints(booleanPoints)
     }
 
-    override fun createPointsString(): String = "${resultPointsArray[1]}"
+    override fun createMeasuredString() =
+        if (getBooleanParameter) shortString.substring(0 until 5) else ""
+
+    override fun createPointsString(): String = "${getResultPoints()}"
 }

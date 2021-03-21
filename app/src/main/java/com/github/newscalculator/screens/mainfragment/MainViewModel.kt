@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.newscalculator.EvalParameter
 import com.github.newscalculator.diseaseparameterstypes.AbstractDiseaseType
 import kotlinx.coroutines.launch
 
@@ -18,8 +17,8 @@ class MainViewModel : ViewModel() {
         get() = evalParametersList
 
     //измененный параметр состояния
-    private val changedParameter = MutableLiveData<EvalParameter>()
-    val getChangedParameter: LiveData<EvalParameter>
+    private val changedParameter = MutableLiveData<AbstractDiseaseType>()
+    val getChangedParameter: LiveData<AbstractDiseaseType>
         get() = changedParameter
 
     //событие об изменении всех параметров
@@ -45,20 +44,19 @@ class MainViewModel : ViewModel() {
             inputDoubleValue,
             inputBooleanValue
         )
+        changedParameter.postValue(parameterToChange)
     }
 
-    fun checkEverythingIsChanged() {
-        val everythingIsEntered =
-            !evalParametersList.value.orEmpty().map {
-                it.isModified
-            }.filterIndexed { index, _ -> index != 5 }.contains(false)
-        if (everythingIsEntered) {
-            val finalSum = countSum()
-            everythingIsEnteredLiveData.postValue(finalSum)
+    fun checkEverythingIsEntered() {
+        evalParametersList.value.orEmpty().filter {
+            it.required
+        }.forEach {
+            if (it.isModified.not()) return
         }
+        everythingIsEnteredLiveData.postValue(countSum())
     }
 
-    fun countSum(): Int {
+    private fun countSum(): Int {
         var sum = 0
         evalParametersList.value.orEmpty().forEach {
             sum += it.getResultPoints()

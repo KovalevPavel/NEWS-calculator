@@ -4,58 +4,80 @@ import android.os.Parcelable
 import com.github.newscalculator.moshi.EvalTypes
 import com.squareup.moshi.Json
 
-abstract class AbstractDiseaseType(@Json(name = "type") val type: EvalTypes) : Parcelable {
+/*
+Родительский класс типов измеряемых параметров
+
+    normalValue - нормальное значение измеряемого параметра. Используется в editText.hint
+    fractional - указывает, будет ли учитываться, что в поле ввода параметра будет дробь
+    required - обязательный параметр или нет.
+            Если нет - итоговый расчет будет проводиться независимо от того, заполнялся он или нет
+    arrayOfEvalLevels - границы диапозонов измеряемых значений
+    arrayOfDiseasePoints - оценки, соответствующие диапазонам значений
+    measuredArray - массив с измеренными значениями
+    resultPointsArray - массив с полученными оценками
+    shortString - переменная для идентификации добавок. Используется в Checkable и Combined
+ */
+
+abstract class AbstractDiseaseType(
+    @Json(name = "type") val type: EvalTypes,
+) : Parcelable {
     companion object {
+        /*
+        размер массива под измеряемые параметры
+        Зарезервированные индексы:
+        0 - числовые параметры (температура, давление и т.д.)
+        1 - булевы параметры (необходимость инсуфляции, изменение сознания)
+         */
         private const val ARRAY_SIZE = 2
     }
 
     abstract val id: Long
-
-    //нормальное значение измеряемого параметра. Используется в editText.hint
-    abstract val normalValue: Double
-
     abstract val parameterName: String
-
-    //границы диапозонов измеряемых значений
+    abstract val normalValue: Double
+    abstract val fractional: Boolean
+    abstract val required: Boolean
     open val arrayOfEvalLevels: Array<Double> = emptyArray()
-
-    //оценки, соответствующие диапазонам значений
     open val arrayOfDiseasePoints: Array<Int> = emptyArray()
-
-    //флаг изменения параметра в текущей сессии
+    val measuredArray: Array<Any?> = arrayOfNulls(ARRAY_SIZE)
+    open val shortString = ""
     var isModified = false
 
-    //переменная для идентификации добавок. Используется в Checkable и Combined
-    open val shortString = ""
-
-    //массив с измеренными значениями
-    open val measuredArray: Array<Any> = Array(ARRAY_SIZE) {
-        0.0
-    }
-
-    //массив с оценками
-    open val resultPointsArray: Array<Int> = Array(ARRAY_SIZE) {
+    val resultPointsArray: Array<Int> = Array(ARRAY_SIZE) {
         0
     }
 
-    //расчет результирующей оценки
-    open fun evaluatePoints() {
-        val minIndex =
-            arrayOfEvalLevels.indexOfFirst {
-                arrayOfEvalLevels.indexOf(it) % 2 == 1 &&
-                        (measuredArray[0] as Int) <= it
-            }
+    val getMeasuredPoints: Int
+        get() = resultPointsArray[0]
+    val getBooleanPoints: Int
+        get() = resultPointsArray[1]
+    val getNumberParameter: Double
+        get() = measuredArray[0] as? Double ?: -1.0
+    val getBooleanParameter: Boolean
+        get() = measuredArray[1] as? Boolean ?: false
 
-        val numericalPoints =
-            if (minIndex > 0) arrayOfDiseasePoints[(minIndex - 1) / 2]
-            else arrayOfDiseasePoints[arrayOfDiseasePoints.lastIndex]
-
-        resultPointsArray[0] = numericalPoints
+    fun setMeasuredParameter(measuredParameter: Double) {
+        measuredArray[0] = measuredParameter
     }
 
-    //общая сумма оценок
+    fun setBooleanParameter(parameter: Boolean) {
+        measuredArray[1] = parameter
+    }
+
+    fun setMeasuredPoints(points: Int) {
+        resultPointsArray[0] = points
+    }
+
+    fun setBooleanPoints(points: Int) {
+        resultPointsArray[1] = points
+    }
+
     fun getResultPoints() = resultPointsArray.sum()
 
+    abstract fun evaluatePoints()
+
+    //функция получения строки с замеренными значениями
+    abstract fun createMeasuredString(): String
+
     //функция получения строки с баллами для отображения
-    open fun createPointsString(): String = "${resultPointsArray[0]}"
+    abstract fun createPointsString(): String
 }

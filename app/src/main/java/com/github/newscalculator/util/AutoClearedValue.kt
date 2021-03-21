@@ -1,4 +1,4 @@
-package com.github.newscalculator
+package com.github.newscalculator.util
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle

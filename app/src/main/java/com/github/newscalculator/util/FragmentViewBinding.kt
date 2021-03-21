@@ -1,4 +1,4 @@
-package com.github.newscalculator
+package com.github.newscalculator.util
 
 import android.os.Bundle
 import android.view.LayoutInflater

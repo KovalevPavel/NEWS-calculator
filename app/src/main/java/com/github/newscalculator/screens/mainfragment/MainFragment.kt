@@ -5,13 +5,13 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.github.newscalculator.AutoClearedValue
-import com.github.newscalculator.FragmentViewBinding
 import com.github.newscalculator.R
 import com.github.newscalculator.adapters.Decoration
 import com.github.newscalculator.adapters.DiseaseAdapter
 import com.github.newscalculator.databinding.FragmentMainBinding
 import com.github.newscalculator.diseaseparameterstypes.AbstractDiseaseType
+import com.github.newscalculator.util.AutoClearedValue
+import com.github.newscalculator.util.FragmentViewBinding
 
 class MainFragment :
     FragmentViewBinding<FragmentMainBinding>(FragmentMainBinding::inflate),
@@ -29,8 +29,9 @@ class MainFragment :
     }
 
     private fun initUI() {
-        diseaseAdapter = DiseaseAdapter { position -> translateItemIdIntoDialog(position) }
-
+        diseaseAdapter = DiseaseAdapter { position ->
+            translateItemIdIntoDialog(position)
+        }
         binder.recView.apply {
             adapter = diseaseAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -61,14 +62,13 @@ class MainFragment :
                 diseaseAdapter.notifyDataSetChanged()
             }
 
-//            getChangedParameter.observe(viewLifecycleOwner) { changedParameter ->
-//                if (!binder.clearFAB.isVisible) binder.clearFAB.isVisible = true
-//                val position = changedParameter.id
-//                diseaseAdapter.diseaseList[position] = changedParameter
-//                diseaseAdapter.notifyItemChanged(position)
-//                evalViewModel.checkEverythingIsChanged()
-//                evalViewModel.countSum()
-//            }
+            getChangedParameter.observe(viewLifecycleOwner) { changedParameter ->
+                if (!binder.clearFAB.isVisible) binder.clearFAB.isVisible = true
+                val position = changedParameter.id.toInt()
+                diseaseAdapter.diseaseList[position] = changedParameter
+                diseaseAdapter.notifyItemChanged(position)
+                evalViewModel.checkEverythingIsEntered()
+            }
 
             getEverythingIsEntered.observe(viewLifecycleOwner) { newSum ->
                 binder.textViewResult.text = "$newSum/19"

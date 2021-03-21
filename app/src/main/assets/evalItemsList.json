@@ -4,6 +4,8 @@
     "id": 0,
     "parameterName": "Частота дыхания за 1 минуту:",
     "normalValue": 16,
+    "fractional": false,
+    "required": true,
     "arrayOfEvalLevels": [
       0,
       8,
@@ -29,6 +31,9 @@
     "id": 1,
     "parameterName": "Насыщенность крови кислородом, %:",
     "normalValue": 100,
+    "fractional": false,
+    "required": true,
+    "threshold": 94,
     "arrayOfEvalLevels": [
       0,
       91,
@@ -47,13 +52,15 @@
     ],
     "maxCheckableValue": 1,
     "label": "Инсуфляция кислорода",
-    "shortString": "Инсуф"
+    "shortString": "Инсуфляция"
   },
   {
     "type": "Numerical",
     "id": 2,
     "parameterName": "Температура тела:",
     "normalValue": 36.6,
+    "fractional": true,
+    "required": true,
     "arrayOfEvalLevels": [
       0,
       35,
@@ -79,6 +86,8 @@
     "id": 3,
     "parameterName": "Систолическое артериальное давление:",
     "normalValue": 120,
+    "fractional": false,
+    "required": true,
     "arrayOfEvalLevels": [
       0,
       90,
@@ -104,6 +113,8 @@
     "id": 4,
     "parameterName": "Частота сердечных сокращений за 1 минуту:",
     "normalValue": 70,
+    "fractional": false,
+    "required": true,
     "arrayOfEvalLevels": [
       40,
       41,
@@ -131,8 +142,10 @@
     "id": 5,
     "parameterName": "Изменение уровня сознания",
     "normalValue": 0,
+    "fractional": false,
+    "required": false,
     "maxCheckableValue": 3,
     "label": "Изменение уровня сознания",
-    "shortString": "Измен"
+    "shortString": "Изменение сознания"
   }
 ]

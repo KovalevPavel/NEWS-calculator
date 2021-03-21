@@ -17,6 +17,10 @@ import org.json.JSONException
 
 class MainRepository {
 
+    /*
+    создаем объект Moshi с полиморфным адаптером, который позволяет парсить объекты в разные классы
+    в зависимости от ключевого поля (в нашем случае - поле "type") объекта
+     */
     private val moshi = Moshi.Builder()
         .add(
             PolymorphicJsonAdapterFactory.of(AbstractDiseaseType::class.java, "type")
@@ -38,8 +42,8 @@ class MainRepository {
         inputBooleanValue: Boolean
     ) {
         item.apply {
-            measuredArray[0] = inputDoubleValue
-            measuredArray[1] = inputBooleanValue
+            setMeasuredParameter(inputDoubleValue)
+            setBooleanParameter(inputBooleanValue)
             evaluatePoints()
             isModified = true
         }

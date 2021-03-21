@@ -12,5 +12,29 @@ data class NumericalDiseaseType(
     override val normalValue: Double,
     override val arrayOfEvalLevels: Array<Double>,
     override val arrayOfDiseasePoints: Array<Int>,
-) : AbstractDiseaseType(EvalTypes.Numerical)
+    override val fractional: Boolean,
+    override val required: Boolean,
+) : AbstractDiseaseType(EvalTypes.Numerical) {
 
+    override fun evaluatePoints() {
+        //ближайший индекс из таблицы NEWS
+        val minIndex =
+            arrayOfEvalLevels.indexOfFirst {
+                arrayOfEvalLevels.indexOf(it) % 2 == 1 &&
+                        (getNumberParameter) <= it
+            }
+
+        val numericalPoints =
+            if (minIndex > 0) arrayOfDiseasePoints[(minIndex - 1) / 2]
+            else arrayOfDiseasePoints[arrayOfDiseasePoints.lastIndex]
+
+        setMeasuredPoints(numericalPoints)
+    }
+
+    override fun createMeasuredString(): String {
+        val measuredValue = if (fractional) getNumberParameter else getNumberParameter.toInt()
+        return if (getNumberParameter > 0.0) "$measuredValue" else ""
+    }
+
+    override fun createPointsString() = "${getResultPoints()}"
+}
