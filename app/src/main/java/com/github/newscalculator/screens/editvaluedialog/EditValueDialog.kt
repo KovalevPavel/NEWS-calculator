@@ -9,9 +9,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.navArgs
-import com.github.newscalculator.EvalParameter
 import com.github.newscalculator.databinding.DialogEditvalueBinding
 import com.github.newscalculator.databinding.DialogTitleBinding
+import com.github.newscalculator.diseaseparameterstypes.AbstractDiseaseType
 import com.github.newscalculator.screens.mainfragment.ConnectionToDialog
 
 class EditValueDialog : DialogFragment() {
@@ -19,7 +19,7 @@ class EditValueDialog : DialogFragment() {
     private lateinit var viewBinder: DialogEditvalueBinding
     private lateinit var titleBinder: DialogTitleBinding
     private lateinit var textWatcher: MyTextWatcher
-    private lateinit var inputEvalParameter: EvalParameter
+    private lateinit var inputDiseaseParameter: AbstractDiseaseType
 
     private val parentEntity: ConnectionToDialog
         get() = activity?.let {
@@ -31,10 +31,10 @@ class EditValueDialog : DialogFragment() {
         val inflater = LayoutInflater.from(requireContext())
         viewBinder = DialogEditvalueBinding.inflate(inflater)
         titleBinder = DialogTitleBinding.inflate(inflater)
-        inputEvalParameter = args.inputEvalParameter
-        textWatcher = when (inputEvalParameter.id) {
-            1 -> MyTextWatcher(viewBinder, TextInputType.OXYGEN)
-            2 -> MyTextWatcher(viewBinder, TextInputType.TEMPERATURE)
+        inputDiseaseParameter = args.inputEvalParameter
+        textWatcher = when (inputDiseaseParameter.id) {
+            1L -> MyTextWatcher(viewBinder, TextInputType.OXYGEN)
+            2L -> MyTextWatcher(viewBinder, TextInputType.TEMPERATURE)
             else -> MyTextWatcher(viewBinder, TextInputType.COMMON)
         }
     }
@@ -47,7 +47,7 @@ class EditValueDialog : DialogFragment() {
             .setPositiveButton("OK") { _, _ ->
                 viewBinder.apply {
                     val isSwitchChecked = switchEvalBooleanParameter.isChecked
-                    inputEvalParameter.apply {
+                    inputDiseaseParameter.apply {
                         val evalValue = when (editTextNumberSigned.text.toString()) {
                             "" -> if (!editTextNumberSigned.isVisible) (-1).toDouble() else normalValue
                             "." -> normalValue
@@ -67,7 +67,7 @@ class EditValueDialog : DialogFragment() {
     override fun onResume() {
         super.onResume()
         bindView()
-        if (inputEvalParameter.id != 5)
+        if (inputDiseaseParameter.id != 5L)
             dialog?.window?.setSoftInputMode(SOFT_INPUT_STATE_ALWAYS_VISIBLE)
     }
 
@@ -78,22 +78,22 @@ class EditValueDialog : DialogFragment() {
 
     private fun bindView() {
         viewBinder.apply {
-            textDialogParameterName.text = inputEvalParameter.parameterName
+            textDialogParameterName.text = inputDiseaseParameter.parameterName
             editTextNumberSigned.hint =
-                if (inputEvalParameter.id == 2) inputEvalParameter.normalValue.toString()
-                else inputEvalParameter.normalValue.toInt().toString()
-            switchEvalBooleanParameter.text = inputEvalParameter.specialMark
-            switchEvalBooleanParameter.isChecked = inputEvalParameter.diseaseBooleanPoints != 0
+                if (inputDiseaseParameter.id == 2L) inputDiseaseParameter.normalValue.toString()
+                else inputDiseaseParameter.normalValue.toInt().toString()
+            switchEvalBooleanParameter.text = inputDiseaseParameter.shortString
+            switchEvalBooleanParameter.isChecked = inputDiseaseParameter.measuredArray[1] as Boolean
 
-            if (inputEvalParameter.id == 5) {
+            if (inputDiseaseParameter.id == 5L) {
                 editTextNumberSigned.visibility = View.GONE
                 textDialogParameterName.visibility = View.GONE
             }
 
-            if (!(inputEvalParameter.id == 1 || inputEvalParameter.id == 5))
+            if (!(inputDiseaseParameter.id == 1L || inputDiseaseParameter.id == 5L))
                 switchEvalBooleanParameter.visibility = View.GONE
-            if (inputEvalParameter.id != 5) {
-                editTextNumberSigned.setText(convertEvalValue(inputEvalParameter))
+            if (inputDiseaseParameter.id != 5L) {
+                editTextNumberSigned.setText(convertEvalValue(inputDiseaseParameter))
                 editTextNumberSigned.requestFocus()
                 editTextNumberSigned.setSelection(0, editTextNumberSigned.text.length)
             }
@@ -107,11 +107,11 @@ class EditValueDialog : DialogFragment() {
         return this.toString().substring(0, dotPosition + 2).toDouble()
     }
 
-    private fun convertEvalValue(item: EvalParameter?) =
-        item?.measuredValue?.let {
-            when (item.normalValue) {
-                36.6 -> if (it == 0.0) "" else it.toString()
-                else -> if (it == 0.0) "" else it.toInt().toString()
-            }
-        } ?: ""
+    private fun convertEvalValue(item: AbstractDiseaseType): String {
+        val measuredValue = item.measuredArray[0] as Double
+        return when (item.normalValue) {
+            36.6 -> if (measuredValue == 0.0) "" else measuredValue.toString()
+            else -> if (measuredValue == 0.0) "" else measuredValue.toInt().toString()
+        }
+    }
 }

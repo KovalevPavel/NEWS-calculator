@@ -6,14 +6,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.newscalculator.EvalParameter
+import com.github.newscalculator.diseaseparameterstypes.AbstractDiseaseType
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
-    private val repository = Mainrepository()
+    private val repository = MainRepository()
 
     //список оцениваемых параметров (строки таблцы NEWS)
-    private val evalParametersList = MutableLiveData<MutableList<EvalParameter>>()
-    val getEvalParametersList: LiveData<MutableList<EvalParameter>>
+    private val evalParametersList = MutableLiveData<MutableList<AbstractDiseaseType>>()
+    val getEvalParametersList: LiveData<MutableList<AbstractDiseaseType>>
         get() = evalParametersList
 
     //измененный параметр состояния
@@ -21,52 +22,34 @@ class MainViewModel : ViewModel() {
     val getChangedParameter: LiveData<EvalParameter>
         get() = changedParameter
 
-    //массив с текущими измеренными значениями или null (если значение еще не замерено)
-    private lateinit var listOfCurrentParameters: MutableList<Int?>
-
     //событие об изменении всех параметров
     private val everythingIsEnteredLiveData = MutableLiveData<Int>()
     val getEverythingIsEntered: LiveData<Int>
         get() = everythingIsEnteredLiveData
 
-    //список ихмененных параметров для отслеживания изменений
-    private var listToMonitor = mutableListOf<EvalParameter>()
-
     //начальная загрузка таблицы
     fun getEvalList(res: Resources) {
         viewModelScope.launch {
             val evalList = repository.generateEval(res)
-            listOfCurrentParameters = MutableList(evalList.size) { null }
             evalParametersList.postValue(evalList)
-            listToMonitor = evalList
         }
     }
 
     fun changeInputValue(
-        evalParameter: EvalParameter,
-        inputDoubleValue: Double?,
+        parameterToChange: AbstractDiseaseType,
+        inputDoubleValue: Double,
         inputBooleanValue: Boolean
     ) {
-        val changedEval =
-            repository.changeEvalParameter(evalParameter, inputDoubleValue, inputBooleanValue)
-
-        //высчитываем общую оценку с учетом чекбокса
-        val newCommonDiseasePoints = changedEval.diseasePoints + changedEval.diseaseBooleanPoints
-
-        //записываем оценку объекта в список общей картины больного
-        listOfCurrentParameters[changedEval.id] =
-            if (inputDoubleValue == null || (!inputBooleanValue && inputDoubleValue == -1.0)) null else newCommonDiseasePoints
-
-        //меняем параметр
-        changedParameter.postValue(changedEval)
-
-        //заносим в список объектов новый измененный объект
-        listToMonitor[changedEval.id] = changedEval
+        repository.changeEvalParameter(
+            parameterToChange,
+            inputDoubleValue,
+            inputBooleanValue
+        )
     }
 
     fun checkEverythingIsChanged() {
         val everythingIsEntered =
-            !listToMonitor.map {
+            !evalParametersList.value.orEmpty().map {
                 it.isModified
             }.filterIndexed { index, _ -> index != 5 }.contains(false)
         if (everythingIsEntered) {
@@ -75,14 +58,11 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun countSum(): Int = listOfCurrentParameters.sumOfPoints()
-
-    private fun <T : List<Int?>> T.sumOfPoints(): Int {
-        var tempSum = 0
-        for (index in indices)
-            this[index]?.let {
-                if (it > 0) tempSum += it
-            }
-        return tempSum
+    fun countSum(): Int {
+        var sum = 0
+        evalParametersList.value.orEmpty().forEach {
+            sum += it.getResultPoints()
+        }
+        return sum
     }
 }

@@ -1,39 +1,38 @@
 package com.github.newscalculator.screens.mainfragment
 
-import android.os.Bundle
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.newscalculator.AutoClearedValue
-import com.github.newscalculator.EvalParameter
 import com.github.newscalculator.FragmentViewBinding
 import com.github.newscalculator.R
 import com.github.newscalculator.adapters.Decoration
-import com.github.newscalculator.adapters.EvalAdapter
+import com.github.newscalculator.adapters.DiseaseAdapter
 import com.github.newscalculator.databinding.FragmentMainBinding
+import com.github.newscalculator.diseaseparameterstypes.AbstractDiseaseType
 
 class MainFragment :
     FragmentViewBinding<FragmentMainBinding>(FragmentMainBinding::inflate),
     ConnectionToDialog {
-    private var evalAdapter by AutoClearedValue<EvalAdapter>()
+    private var diseaseAdapter by AutoClearedValue<DiseaseAdapter>()
     private val evalViewModel: MainViewModel by viewModels()
 
     override var allowToCallDialog = true
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onStart() {
+        super.onStart()
         initUI()
         bindViewModel()
         loadData()
     }
 
     private fun initUI() {
-        evalAdapter = EvalAdapter { position -> translateItemIdIntoDialog(position) }
+        diseaseAdapter = DiseaseAdapter { position -> translateItemIdIntoDialog(position) }
 
         binder.recView.apply {
-            adapter = evalAdapter
+            adapter = diseaseAdapter
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)
             addItemDecoration(Decoration(requireContext()))
@@ -58,18 +57,18 @@ class MainFragment :
         evalViewModel.apply {
             getEvalParametersList.observe(viewLifecycleOwner) { newList ->
                 resetUI()
-                evalAdapter.diseaseList = newList
-                evalAdapter.notifyDataSetChanged()
+                diseaseAdapter.diseaseList = newList
+                diseaseAdapter.notifyDataSetChanged()
             }
 
-            getChangedParameter.observe(viewLifecycleOwner) { changedParameter ->
-                if (!binder.clearFAB.isVisible) binder.clearFAB.isVisible = true
-                val position = changedParameter.id
-                evalAdapter.diseaseList[position] = changedParameter
-                evalAdapter.notifyItemChanged(position)
-                evalViewModel.checkEverythingIsChanged()
-                evalViewModel.countSum()
-            }
+//            getChangedParameter.observe(viewLifecycleOwner) { changedParameter ->
+//                if (!binder.clearFAB.isVisible) binder.clearFAB.isVisible = true
+//                val position = changedParameter.id
+//                diseaseAdapter.diseaseList[position] = changedParameter
+//                diseaseAdapter.notifyItemChanged(position)
+//                evalViewModel.checkEverythingIsChanged()
+//                evalViewModel.countSum()
+//            }
 
             getEverythingIsEntered.observe(viewLifecycleOwner) { newSum ->
                 binder.textViewResult.text = "$newSum/19"
@@ -82,7 +81,7 @@ class MainFragment :
         if (allowToCallDialog) {
             allowToCallDialog = false
             val action =
-                MainFragmentDirections.actionCheckListFragmentToEditValueDialog(evalAdapter.diseaseList[id])
+                MainFragmentDirections.actionCheckListFragmentToEditValueDialog(diseaseAdapter.diseaseList[id])
             findNavController().navigate(action)
         }
     }
@@ -99,10 +98,10 @@ class MainFragment :
     }
 
     override fun onDialogClicked(
-        evalParameter: EvalParameter,
-        measuredValue: Double?,
+        diseaseParameter: AbstractDiseaseType,
+        measuredValue: Double,
         measuredIsChecked: Boolean
     ) {
-        evalViewModel.changeInputValue(evalParameter, measuredValue, measuredIsChecked)
+        evalViewModel.changeInputValue(diseaseParameter, measuredValue, measuredIsChecked)
     }
 }

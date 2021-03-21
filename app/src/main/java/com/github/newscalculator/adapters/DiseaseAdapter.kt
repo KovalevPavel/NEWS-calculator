@@ -3,13 +3,13 @@ package com.github.newscalculator.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.github.newscalculator.EvalParameter
 import com.github.newscalculator.databinding.ItemEvaluationParameterBinding
+import com.github.newscalculator.diseaseparameterstypes.AbstractDiseaseType
 
-class EvalAdapter(private val onItemClick: (Int) -> Unit) :
+class DiseaseAdapter(private val onItemClick: (Int) -> Unit) :
     RecyclerView.Adapter<DiseaseHolder>() {
     private lateinit var binder: ItemEvaluationParameterBinding
-    var diseaseList = mutableListOf<EvalParameter>()
+    var diseaseList = mutableListOf<AbstractDiseaseType>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiseaseHolder {
         val inflater = LayoutInflater.from(parent.context)

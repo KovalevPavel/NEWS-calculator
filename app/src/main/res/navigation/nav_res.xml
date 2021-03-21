@@ -21,6 +21,6 @@
         tools:layout="@layout/dialog_editvalue">
         <argument
             android:name="inputEvalParameter"
-            app:argType="com.github.newscalculator.EvalParameter" />
+            app:argType="com.github.newscalculator.diseaseparameterstypes.AbstractDiseaseType" />
     </dialog>
 </navigation>

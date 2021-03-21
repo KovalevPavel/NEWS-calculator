@@ -1,52 +1,36 @@
 package com.github.newscalculator.adapters
 
-import com.github.newscalculator.EvalParameter
 import com.github.newscalculator.databinding.ItemEvaluationParameterBinding
+import com.github.newscalculator.diseaseparameterstypes.AbstractDiseaseType
+import com.github.newscalculator.diseaseparameterstypes.CombinedDiseaseType
 
 class DiseaseHolder(
     private val binder: ItemEvaluationParameterBinding,
     onClick: (Int) -> Unit
 ) : BaseHolder(binder.root, onClick) {
 
-    fun bind(item: EvalParameter) {
+    fun bind(item: AbstractDiseaseType) {
         binder.apply {
             textParameterName.text = item.parameterName
             textViewEvalPoints.text = makeEvalString(item)
-
-            textViewDiseasePoints.text =
-                item.measuredValue?.let {
-                    when (item.diseaseBooleanPoints) {
-                        0 -> "${item.diseasePoints}"
-                        else -> if (item.diseasePoints != 0) "${item.diseasePoints}\n${item.diseaseBooleanPoints}" else "${item.diseaseBooleanPoints}"
-                    }
-                } ?: "0"
+            textViewDiseasePoints.text = item.createPointsString()
         }
     }
 
-    private fun makeEvalString(item: EvalParameter) =
-        when (item.measuredValue) {
-            -1.0 ->
-                if (item.diseaseBooleanPoints != 0) item.specialMark.substring(0, 5)
+    private fun makeEvalString(item: AbstractDiseaseType) =
+        when (item.measuredArray[0]) {
+            0 ->
+                if (item.measuredArray[1] as Boolean) item.shortString
                 else ""
             else -> convertEvalValue(item)
         }
 
-    private fun convertEvalValue(item: EvalParameter): String {
-        var tempString = ""
-        item.measuredValue?.let {
-            tempString = when (item.normalValue) {
-                36.6 -> it.toString()
-                else -> if (checkInsufflation(item)) "${it.toInt()}\n${
-                    item.specialMark.substring(
-                        0,
-                        5
-                    )
-                }" else "${it.toInt()}"
-            }
+    private fun convertEvalValue(item: AbstractDiseaseType): String {
+        val measuredValue = item.measuredArray[0] as Double
+        return when (item.normalValue) {
+            36.6 -> measuredValue.toString()
+            else -> if (item is CombinedDiseaseType && item.measuredArray[1] as Boolean)
+                "${measuredValue.toInt()}\n${item.shortString}" else "${measuredValue.toInt()}"
         }
-        return tempString
     }
-
-    private fun checkInsufflation(item: EvalParameter) =
-        item.id == 1 && item.diseaseBooleanPoints != 0
 }
