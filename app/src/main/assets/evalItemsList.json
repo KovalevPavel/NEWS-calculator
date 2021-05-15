@@ -1,9 +1,12 @@
 [
   {
+    "type": "Numerical",
     "id": 0,
-    "name": "Частота дыхания за 1 минуту:",
+    "parameterName": "Частота дыхания за 1 минуту:",
     "normalValue": 16,
-    "arrayOFLevels": [
+    "fractional": false,
+    "required": true,
+    "arrayOfEvalLevels": [
       0,
       8,
       9,
@@ -15,20 +18,23 @@
       25,
       100
     ],
-    "arrayOfMarks": [
+    "arrayOfDiseasePoints": [
       3,
       1,
       0,
       2,
       3
-    ],
-    "maxCheckableValue": 0
+    ]
   },
   {
+    "type": "Combined",
     "id": 1,
-    "name": "Насыщенность крови кислородом, %:",
+    "parameterName": "Насыщенность крови кислородом, %:",
     "normalValue": 100,
-    "arrayOFLevels": [
+    "fractional": false,
+    "required": true,
+    "threshold": 94,
+    "arrayOfEvalLevels": [
       0,
       91,
       92,
@@ -38,20 +44,24 @@
       96,
       100
     ],
-    "arrayOfMarks": [
+    "arrayOfDiseasePoints": [
       3,
       2,
       1,
       0
     ],
-    "maxCheckableValue": 0,
-    "spMark": "Инсуфляция кислорода"
+    "maxCheckableValue": 1,
+    "label": "Инсуфляция кислорода",
+    "shortString": "Инсуфляция"
   },
   {
+    "type": "Numerical",
     "id": 2,
-    "name": "Температура тела:",
+    "parameterName": "Температура тела:",
     "normalValue": 36.6,
-    "arrayOFLevels": [
+    "fractional": true,
+    "required": true,
+    "arrayOfEvalLevels": [
       0,
       35,
       35.1,
@@ -63,20 +73,22 @@
       39.1,
       43
     ],
-    "arrayOfMarks": [
+    "arrayOfDiseasePoints": [
       3,
       1,
       0,
       1,
       2
-    ],
-    "maxCheckableValue": 0
+    ]
   },
   {
+    "type": "Numerical",
     "id": 3,
-    "name": "Систолическое артериальное давление:",
+    "parameterName": "Систолическое артериальное давление:",
     "normalValue": 120,
-    "arrayOFLevels": [
+    "fractional": false,
+    "required": true,
+    "arrayOfEvalLevels": [
       0,
       90,
       91,
@@ -88,20 +100,22 @@
       220,
       300
     ],
-    "arrayOfMarks": [
+    "arrayOfDiseasePoints": [
       3,
       2,
       1,
       0,
       3
-    ],
-    "maxCheckableValue": 0
+    ]
   },
   {
+    "type": "Numerical",
     "id": 4,
-    "name": "Частота сердечных сокращений за 1 минуту:",
+    "parameterName": "Частота сердечных сокращений за 1 минуту:",
     "normalValue": 70,
-    "arrayOFLevels": [
+    "fractional": false,
+    "required": true,
+    "arrayOfEvalLevels": [
       40,
       41,
       50,
@@ -114,29 +128,24 @@
       131,
       400
     ],
-    "arrayOfMarks": [
+    "arrayOfDiseasePoints": [
       3,
       1,
       0,
       1,
       2,
       3
-    ],
-    "maxCheckableValue": 0
+    ]
   },
   {
+    "type": "Checkable",
     "id": 5,
-    "name": "Изменение уровня сознания",
+    "parameterName": "Изменение уровня сознания",
     "normalValue": 0,
-    "arrayOFLevels": [
-      0,
-      1
-    ],
-    "arrayOfMarks": [
-      0,
-      3
-    ],
+    "fractional": false,
+    "required": false,
     "maxCheckableValue": 3,
-    "spMark": "Изменение уровня сознания"
+    "label": "Изменение уровня сознания",
+    "shortString": "Изменение сознания"
   }
 ]
