@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nar_res"
+    app:startDestination="@id/checkListFragment">
+    <fragment
+        android:id="@+id/checkListFragment"
+        android:name="com.github.newscalculator.screens.mainfragment.MainFragment"
+        android:label="CheckListFragment"
+        tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/action_checkListFragment_to_editValueDialog"
+            app:destination="@id/editValueDialog"
+            app:launchSingleTop="true" />
+    </fragment>
+    <dialog
+        android:id="@+id/editValueDialog"
+        android:name="com.github.newscalculator.screens.editvaluedialog.EditValueDialog"
+        android:label="EditValueDialog"
+        tools:layout="@layout/dialog_editvalue">
+        <argument
+            android:name="inputEvalParameter"
+            app:argType="com.github.newscalculator.diseaseparameterstypes.AbstractDiseaseType" />
+    </dialog>
+</navigation>
