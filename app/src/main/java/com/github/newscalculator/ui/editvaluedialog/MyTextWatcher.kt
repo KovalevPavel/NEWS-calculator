@@ -1,4 +1,4 @@
-package com.github.newscalculator.screens.editvaluedialog
+package com.github.newscalculator.ui.editvaluedialog
 
 import android.text.Editable
 import android.text.TextWatcher

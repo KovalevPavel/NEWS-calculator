@@ -2,13 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
+    android:background="@drawable/dialog_background">
 
     <TextView
         android:id="@+id/textDialogParameterName"
@@ -22,8 +18,9 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Насыщенность крови кислородом, %:" />
 
-    <EditText
-        android:id="@+id/editTextNumberSigned"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/editTextNumberLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
@@ -32,20 +29,40 @@
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textDialogParameterName"
-        tools:ignore="Autofill,LabelFor"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="32dp" />
+        app:layout_constraintTop_toBottomOf="@+id/textDialogParameterName">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextNumberSigned"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAlignment="center" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Switch
         android:id="@+id/switchEvalBooleanParameter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        app:layout_constraintEnd_toEndOf="@id/editTextNumberSigned"
-        app:layout_constraintStart_toStartOf="@id/editTextNumberSigned"
-        app:layout_constraintTop_toBottomOf="@id/editTextNumberSigned"
+        app:layout_constraintEnd_toEndOf="@id/editTextNumberLayout"
+        app:layout_constraintStart_toStartOf="@id/editTextNumberLayout"
+        app:layout_constraintTop_toBottomOf="@id/editTextNumberLayout"
         tools:ignore="UseSwitchCompatOrMaterialXml"
         tools:text="Инсуффляция кислорода:" />
+
+    <TextView
+        android:id="@+id/btnConfirm"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/dialog_button_background"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:text="Подтвердить"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/switchEvalBooleanParameter" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

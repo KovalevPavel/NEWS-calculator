@@ -1,4 +1,4 @@
-package com.github.newscalculator.screens.mainfragment
+package com.github.newscalculator.ui.mainFragment
 
 import android.content.res.Resources
 import com.github.newscalculator.diseaseparameterstypes.AbstractDiseaseType

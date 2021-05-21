@@ -2,7 +2,7 @@
   {
     "type": "Numerical",
     "id": 0,
-    "parameterName": "Частота дыхания за 1 минуту:",
+    "parameterName": "Частота дыхания за 1 минуту",
     "normalValue": 16,
     "fractional": false,
     "required": true,
@@ -29,7 +29,7 @@
   {
     "type": "Combined",
     "id": 1,
-    "parameterName": "Насыщенность крови кислородом, %:",
+    "parameterName": "Насыщенность крови\nкислородом",
     "normalValue": 100,
     "fractional": false,
     "required": true,
@@ -57,7 +57,7 @@
   {
     "type": "Numerical",
     "id": 2,
-    "parameterName": "Температура тела:",
+    "parameterName": "Температура тела",
     "normalValue": 36.6,
     "fractional": true,
     "required": true,
@@ -84,7 +84,7 @@
   {
     "type": "Numerical",
     "id": 3,
-    "parameterName": "Систолическое артериальное давление:",
+    "parameterName": "Систолическое\nартериальное давление",
     "normalValue": 120,
     "fractional": false,
     "required": true,
@@ -111,7 +111,7 @@
   {
     "type": "Numerical",
     "id": 4,
-    "parameterName": "Частота сердечных сокращений за 1 минуту:",
+    "parameterName": "Частота сердечных\nсокращений за 1 минуту",
     "normalValue": 70,
     "fractional": false,
     "required": true,

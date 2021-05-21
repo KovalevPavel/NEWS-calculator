@@ -1,4 +1,4 @@
-package com.github.newscalculator.adapters
+package com.github.newscalculator.ui.mainFragment.recyclerView
 
 import android.content.Context
 import android.graphics.Rect
@@ -17,9 +17,9 @@ class Decoration (private val context: Context) : RecyclerView.ItemDecoration() 
         val offset = 8.fromDpToPixels(context)
         with(outRect) {
             left = offset
-            bottom = offset/2
+            bottom = offset
             right = offset
-            top = offset/2
+            top = offset
         }
     }
 

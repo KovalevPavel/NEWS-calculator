@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:defaultDuration="100">
+
+    <ConstraintSet android:id="@+id/start" />
+
+    <ConstraintSet android:id="@+id/end">
+        <Constraint android:id="@id/coordinator" />
+        <Constraint
+            android:id="@+id/totalScore"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginBottom="12dp"
+            android:scaleX="0.1"
+            android:scaleY="0.1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/jumpStart">
+        <Constraint
+            android:id="@id/totalScore"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginBottom="60dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </ConstraintSet>
+
+    <Transition android:id="@+id/transitionJumpStart"
+        app:constraintSetEnd="@id/jumpStart"
+        app:constraintSetStart="@id/start"
+        app:motionInterpolator="easeOut">
+    </Transition>
+
+    <Transition
+        app:autoTransition="animateToEnd"
+        app:constraintSetEnd="@id/start"
+        app:constraintSetStart="@id/jumpStart"
+        app:duration="500"
+        app:motionInterpolator="bounce" />
+
+    <Transition
+        android:id="@+id/transitionScale"
+        app:constraintSetEnd="@id/end"
+        app:constraintSetStart="@+id/start"
+        app:motionInterpolator="linear">
+    </Transition>
+
+    <Transition
+        app:autoTransition="animateToEnd"
+        app:constraintSetEnd="@id/start"
+        app:constraintSetStart="@id/end"
+        app:motionInterpolator="linear" />
+
+</MotionScene>

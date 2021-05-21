@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">NEWS-калькулятор</string>
-    <string name="commonHealth">Общее состояние пациента:</string>
-    <string name="clearEval">Очистить</string>
     <string name="enterValueText">Введите замеренное значение</string>
+    <string name="defaultTotalValue">__/19</string>
 </resources>

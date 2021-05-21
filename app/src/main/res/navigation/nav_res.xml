@@ -6,7 +6,7 @@
     app:startDestination="@id/checkListFragment">
     <fragment
         android:id="@+id/checkListFragment"
-        android:name="com.github.newscalculator.screens.mainfragment.MainFragment"
+        android:name="com.github.newscalculator.ui.mainFragment.MainFragment"
         android:label="CheckListFragment"
         tools:layout="@layout/fragment_main">
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <dialog
         android:id="@+id/editValueDialog"
-        android:name="com.github.newscalculator.screens.editvaluedialog.EditValueDialog"
+        android:name="com.github.newscalculator.ui.editvaluedialog.EditValueDialog"
         android:label="EditValueDialog"
         tools:layout="@layout/dialog_editvalue">
         <argument

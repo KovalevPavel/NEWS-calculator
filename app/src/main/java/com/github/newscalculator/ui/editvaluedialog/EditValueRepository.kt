@@ -1,4 +1,4 @@
-package com.github.newscalculator.screens.editvaluedialog
+package com.github.newscalculator.ui.editvaluedialog
 
 import com.github.newscalculator.diseaseparameterstypes.AbstractDiseaseType
 

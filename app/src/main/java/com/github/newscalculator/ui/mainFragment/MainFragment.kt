@@ -1,17 +1,19 @@
-package com.github.newscalculator.screens.mainfragment
+package com.github.newscalculator.ui.mainFragment
 
+import android.os.Bundle
+import android.view.View
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.newscalculator.R
-import com.github.newscalculator.adapters.Decoration
-import com.github.newscalculator.adapters.DiseaseAdapter
 import com.github.newscalculator.databinding.FragmentMainBinding
 import com.github.newscalculator.diseaseparameterstypes.AbstractDiseaseType
+import com.github.newscalculator.ui.mainFragment.recyclerView.Decoration
+import com.github.newscalculator.ui.mainFragment.recyclerView.DiseaseAdapter
 import com.github.newscalculator.util.AutoClearedValue
 import com.github.newscalculator.util.FragmentViewBinding
+import com.github.newscalculator.util.loggingDebug
 
 class MainFragment :
     FragmentViewBinding<FragmentMainBinding>(FragmentMainBinding::inflate),
@@ -21,9 +23,42 @@ class MainFragment :
 
     override var allowToCallDialog = true
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initUI()
+        binder.bottomAppBar.apply {
+            inflateMenu(R.menu.menu_main)
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.id_delete -> {
+                        loggingDebug("deleting")
+                        binder.motionLayout.apply {
+                            setTransition(R.id.transitionScale)
+                            transitionToEnd()
+                        }
+                        loadData()
+                        resetUI()
+                        true
+                    }
+                    R.id.id_help -> {
+                        loggingDebug("helping")
+                        binder.motionLayout.apply {
+                            setTransition(R.id.transitionScale)
+                            transitionToEnd()
+                        }
+                        true
+                    }
+                    else -> {
+                        loggingDebug("else")
+                        true
+                    }
+                }
+            }
+        }
+    }
+
     override fun onStart() {
         super.onStart()
-        initUI()
         bindViewModel()
         loadData()
     }
@@ -36,17 +71,13 @@ class MainFragment :
             adapter = diseaseAdapter
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)
-            addItemDecoration(Decoration(requireContext()))
-        }
-
-        binder.clearFAB.setOnClickListener {
-            loadData()
+            if (itemDecorationCount == 0)
+                addItemDecoration(Decoration(requireContext()))
         }
     }
 
     private fun resetUI() {
-        binder.clearFAB.isVisible = false
-        binder.textViewResult.text = "__/19"
+        binder.totalScore.customBinder.textTotalValue.setText(R.string.defaultTotalValue)
         makeEvalColor(20)
     }
 
@@ -63,7 +94,6 @@ class MainFragment :
             }
 
             getChangedParameter.observe(viewLifecycleOwner) { changedParameter ->
-                if (!binder.clearFAB.isVisible) binder.clearFAB.isVisible = true
                 val position = changedParameter.id.toInt()
                 diseaseAdapter.diseaseList[position] = changedParameter
                 diseaseAdapter.notifyItemChanged(position)
@@ -71,7 +101,7 @@ class MainFragment :
             }
 
             getEverythingIsEntered.observe(viewLifecycleOwner) { newSum ->
-                binder.textViewResult.text = "$newSum/19"
+                binder.totalScore.customBinder.textTotalValue.text = "$newSum/19"
                 makeEvalColor(newSum)
             }
         }
@@ -92,7 +122,7 @@ class MainFragment :
             in (3 until 6) -> R.color.yellow
             else -> R.color.red
         }
-        binder.textViewResult.setTextColor(
+        binder.totalScore.customBinder.textTotalValue.setTextColor(
             ResourcesCompat.getColor(resources, color, null)
         )
     }

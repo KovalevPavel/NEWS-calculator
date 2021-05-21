@@ -1,4 +1,4 @@
-package com.github.newscalculator.adapters
+package com.github.newscalculator.ui.mainFragment.recyclerView
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -18,7 +18,10 @@ class DiseaseAdapter(private val onItemClick: (Int) -> Unit) :
     }
 
     override fun onBindViewHolder(holder: DiseaseHolder, position: Int) {
-        holder.bind(diseaseList[position])
+        val item = diseaseList[position]
+        val bindingType =
+            if (item.isModified.not()) DiseaseHolder.BindType.INITIAL else DiseaseHolder.BindType.REWRITE
+        holder.bind(item, bindingType)
     }
 
     override fun getItemCount() = diseaseList.size
