@@ -1,12 +1,11 @@
-package com.github.newscalculator.ui.editvaluedialog.dialogContents
+package com.github.newscalculator.ui.editvalueDialog.dialogContents
 
 import android.view.View
-import com.github.newscalculator.databinding.DialogEditvalueBinding
-import com.github.newscalculator.diseaseparameterstypes.AbstractDiseaseType
-import com.github.newscalculator.ui.editvaluedialog.DialogContent
+import com.github.newscalculator.databinding.DialogEditValueBinding
+import com.github.newscalculator.domain.entities.AbstractDiseaseType
 
 class DialogSwitch(
-    override val binder: DialogEditvalueBinding,
+    override val binder: DialogEditValueBinding,
     override val item: AbstractDiseaseType
 ) : DialogContent(binder, item) {
     override fun setEditText() {

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 
 abstract class FragmentViewBinding<T : ViewBinding>(
@@ -12,7 +13,7 @@ abstract class FragmentViewBinding<T : ViewBinding>(
         container: ViewGroup?,
         attachToRoot: Boolean
     ) -> T
-) : androidx.fragment.app.Fragment() {
+) : Fragment() {
     private var _binder: T? = null
     protected val binder: T
         get() = _binder!!

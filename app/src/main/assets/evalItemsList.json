@@ -1,6 +1,6 @@
 [
   {
-    "type": "Numerical",
+    "type": "NUMERICAL",
     "id": 0,
     "parameterName": "Частота дыхания за 1 минуту",
     "normalValue": 16,
@@ -27,7 +27,7 @@
     ]
   },
   {
-    "type": "Combined",
+    "type": "COMBINED",
     "id": 1,
     "parameterName": "Насыщенность крови\nкислородом",
     "normalValue": 100,
@@ -55,7 +55,7 @@
     "shortString": "Инсуфляция"
   },
   {
-    "type": "Numerical",
+    "type": "NUMERICAL",
     "id": 2,
     "parameterName": "Температура тела",
     "normalValue": 36.6,
@@ -82,7 +82,7 @@
     ]
   },
   {
-    "type": "Numerical",
+    "type": "NUMERICAL",
     "id": 3,
     "parameterName": "Систолическое\nартериальное давление",
     "normalValue": 120,
@@ -109,7 +109,7 @@
     ]
   },
   {
-    "type": "Numerical",
+    "type": "NUMERICAL",
     "id": 4,
     "parameterName": "Частота сердечных\nсокращений за 1 минуту",
     "normalValue": 70,
@@ -138,7 +138,7 @@
     ]
   },
   {
-    "type": "Checkable",
+    "type": "CHECKABLE",
     "id": 5,
     "parameterName": "Изменение уровня сознания",
     "normalValue": 0,

@@ -1,4 +1,4 @@
-package com.github.newscalculator.diseaseparameterstypes
+package com.github.newscalculator.domain.entities
 
 import com.github.newscalculator.moshi.EvalTypes
 import com.squareup.moshi.JsonClass
@@ -18,7 +18,7 @@ data class CombinedDiseaseType(
     override val required: Boolean,
     //порог, ниже которого переключатель неактивен
     val threshold: Double = 0.0,
-) : AbstractDiseaseType(EvalTypes.Combined) {
+) : AbstractDiseaseType(EvalTypes.COMBINED) {
 
     override fun evaluatePoints() {
         //ближайший индекс из таблицы NEWS
@@ -39,12 +39,20 @@ data class CombinedDiseaseType(
     override fun createMeasuredString(): String {
         val measuredValue = if (fractional) getNumberParameter else getNumberParameter.toInt()
         return when (getBooleanParameter) {
-            true -> "$measuredValue\n${shortString.substring(0 until 5)}"
+            true -> "$measuredValue\n${shortString.substring(0 until 3)}"
             false -> if (getNumberParameter > 0.0) "$measuredValue" else ""
         }
     }
 
     override fun createPointsString(): String {
         return if (!getBooleanParameter) "$getMeasuredPoints" else "$getMeasuredPoints\n$getBooleanPoints"
+    }
+
+    override fun restoreDefault() {
+        setMeasuredParameter(-1.0)
+        setBooleanParameter(false)
+        setMeasuredPoints(0)
+        setBooleanPoints(0)
+        isModified = false
     }
 }

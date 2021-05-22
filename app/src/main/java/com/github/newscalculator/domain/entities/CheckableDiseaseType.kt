@@ -1,4 +1,4 @@
-package com.github.newscalculator.diseaseparameterstypes
+package com.github.newscalculator.domain.entities
 
 import com.github.newscalculator.moshi.EvalTypes
 import com.squareup.moshi.JsonClass
@@ -14,7 +14,7 @@ data class CheckableDiseaseType(
     override val shortString: String,
     override val fractional: Boolean,
     override val required: Boolean,
-) : AbstractDiseaseType(EvalTypes.Checkable) {
+) : AbstractDiseaseType(EvalTypes.CHECKABLE) {
 
     override fun evaluatePoints() {
         val booleanPoints = if (getBooleanParameter) maxCheckableValue else 0
@@ -22,7 +22,12 @@ data class CheckableDiseaseType(
     }
 
     override fun createMeasuredString() =
-        if (getBooleanParameter) shortString.substring(0 until 5) else ""
+        if (getBooleanParameter) shortString.substring(0 until 3) else ""
 
     override fun createPointsString(): String = "${getResultPoints()}"
+    override fun restoreDefault() {
+        setBooleanParameter(false)
+        setBooleanPoints(0)
+        isModified = false
+    }
 }

@@ -2,46 +2,35 @@ package com.github.newscalculator.ui.mainFragment.recyclerView
 
 import androidx.recyclerview.widget.RecyclerView
 import com.github.newscalculator.databinding.ItemEvaluationParameterBinding
-import com.github.newscalculator.diseaseparameterstypes.AbstractDiseaseType
+import com.github.newscalculator.domain.entities.AbstractDiseaseType
 
+/**
+ * <p>ViewHolder для отображения элементов списка измеряемых параметров.</p>
+ * @param onItemClick - событие нажатие на элемент списка (открытие диалога редактирования).
+ * @param onItemLongClick - событие долгого нажатия на элемент списка (очистка элемента списка).
+ */
 class DiseaseHolder(
     private val binder: ItemEvaluationParameterBinding,
-    onClick: (Int) -> Unit
+    onItemClick: (Int) -> Unit,
+    onItemLongClick: (Int) -> Unit
 ) : RecyclerView.ViewHolder(binder.root) {
 
     init {
-        itemView.setOnClickListener {
-            onClick(adapterPosition)
+        binder.parentCard.setOnClickListener {
+            onItemClick(adapterPosition)
+        }
+
+        binder.parentCard.setOnLongClickListener {
+            onItemLongClick(adapterPosition)
+            true
         }
     }
 
-    fun bind(item: AbstractDiseaseType, bindType: BindType) {
+    fun bind(item: AbstractDiseaseType) {
         binder.apply {
             textParameterName.text = item.parameterName
-            textViewEvalPoints.text = when (bindType) {
-                BindType.INITIAL -> ""
-                BindType.REWRITE -> item.createMeasuredString()
-            }
-            revealBookmark(bindType, item.createPointsString())
+            textViewEvalPoints.text = item.createMeasuredString()
+            textView.text = if (textViewEvalPoints.text.isEmpty()) "" else item.createPointsString()
         }
-
-    }
-
-    private fun revealBookmark(type: BindType, points: String) {
-        if (type == BindType.REWRITE) {
-            binder.bookmark.customBinder.textValue.text = points
-            binder.root.transitionToEnd()
-        } else {
-            binder.root.transitionToStart()
-        }
-    }
-/*
-    класс, определяющий тип биндинга
-    INITIAL - биндинг происходит в первый раз
-    REWRITE - во второй и последующие разы
- */
-    enum class BindType {
-        INITIAL,
-        REWRITE
     }
 }

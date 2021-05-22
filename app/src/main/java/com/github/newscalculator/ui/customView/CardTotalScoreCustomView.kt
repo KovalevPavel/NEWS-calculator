@@ -6,6 +6,10 @@ import android.view.LayoutInflater
 import com.github.newscalculator.databinding.ViewTotalScoreBinding
 import com.google.android.material.card.MaterialCardView
 
+/**
+ * Контейнер, в котором отображается общая сумма баллов по пациенту.
+ * @property customBinder Объект типа [ViewTotalScoreBinding] для осуществления viewBinding
+ */
 class CardTotalScoreCustomView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,

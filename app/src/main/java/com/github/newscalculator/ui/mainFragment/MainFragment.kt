@@ -4,55 +4,58 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.newscalculator.R
 import com.github.newscalculator.databinding.FragmentMainBinding
-import com.github.newscalculator.diseaseparameterstypes.AbstractDiseaseType
+import com.github.newscalculator.domain.entities.AbstractDiseaseType
 import com.github.newscalculator.ui.mainFragment.recyclerView.Decoration
 import com.github.newscalculator.ui.mainFragment.recyclerView.DiseaseAdapter
 import com.github.newscalculator.util.AutoClearedValue
 import com.github.newscalculator.util.FragmentViewBinding
-import com.github.newscalculator.util.loggingDebug
+import kotlinx.coroutines.launch
 
 class MainFragment :
     FragmentViewBinding<FragmentMainBinding>(FragmentMainBinding::inflate),
     ConnectionToDialog {
+    private var everythingIsEntered = false
     private var diseaseAdapter by AutoClearedValue<DiseaseAdapter>()
-    private val evalViewModel: MainViewModel by viewModels()
+
+    private val mainViewModel: MainViewModel by viewModels {
+        MyViewModelFactory()
+    }
 
     override var allowToCallDialog = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUI()
-        binder.bottomAppBar.apply {
-            inflateMenu(R.menu.menu_main)
-            setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.id_delete -> {
-                        loggingDebug("deleting")
-                        binder.motionLayout.apply {
-                            setTransition(R.id.transitionScale)
-                            transitionToEnd()
-                        }
-                        loadData()
-                        resetUI()
-                        true
+        initToolbar()
+    }
+
+    private fun initToolbar() {
+        binder.bottomToolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+//                кнопка "удалить"
+                R.id.id_delete -> {
+                    binder.motionLayout.apply {
+                        setTransition(R.id.transitionScale)
+                        transitionToEnd()
                     }
-                    R.id.id_help -> {
-                        loggingDebug("helping")
-                        binder.motionLayout.apply {
-                            setTransition(R.id.transitionScale)
-                            transitionToEnd()
-                        }
-                        true
-                    }
-                    else -> {
-                        loggingDebug("else")
-                        true
-                    }
+                    reloadList()
+                    resetUI()
+                    true
                 }
+//                кнопка "помощь"
+                R.id.id_help -> {
+                    binder.motionLayout.apply {
+                        setTransition(R.id.transitionScale)
+                        transitionToEnd()
+                    }
+                    true
+                }
+                else -> error("Unknown menu id")
             }
         }
     }
@@ -64,9 +67,22 @@ class MainFragment :
     }
 
     private fun initUI() {
-        diseaseAdapter = DiseaseAdapter { position ->
+        diseaseAdapter = DiseaseAdapter({ position ->
             translateItemIdIntoDialog(position)
-        }
+        }, { position ->
+            val everythingWasEntered = everythingIsEntered
+            reloadItem(position)
+            if (diseaseAdapter.diseaseList[position].required) {
+                resetUI()
+                if (everythingWasEntered) {
+                    binder.motionLayout.apply {
+                        setTransition(R.id.transitionJumpStart)
+                        transitionToEnd()
+                    }
+                    everythingIsEntered = false
+                }
+            }
+        })
         binder.recView.apply {
             adapter = diseaseAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -82,27 +98,39 @@ class MainFragment :
     }
 
     private fun loadData() {
-        evalViewModel.getEvalList(this.resources)
+        mainViewModel.getItemsList()
+    }
+
+    private fun reloadList() {
+        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+            mainViewModel.refreshList(diseaseAdapter.diseaseList)
+        }
+    }
+
+    private fun reloadItem(position: Int) {
+        mainViewModel.resetItem(diseaseAdapter.diseaseList[position])
     }
 
     private fun bindViewModel() {
-        evalViewModel.apply {
-            getEvalParametersList.observe(viewLifecycleOwner) { newList ->
+        mainViewModel.apply {
+
+            getItemsList.observe(viewLifecycleOwner) { newList ->
                 resetUI()
                 diseaseAdapter.diseaseList = newList
                 diseaseAdapter.notifyDataSetChanged()
             }
 
-            getChangedParameter.observe(viewLifecycleOwner) { changedParameter ->
+            getChangedItem.observe(viewLifecycleOwner) { changedParameter ->
                 val position = changedParameter.id.toInt()
                 diseaseAdapter.diseaseList[position] = changedParameter
                 diseaseAdapter.notifyItemChanged(position)
-                evalViewModel.checkEverythingIsEntered()
+                mainViewModel.checkEverythingIsEntered()
             }
 
             getEverythingIsEntered.observe(viewLifecycleOwner) { newSum ->
                 binder.totalScore.customBinder.textTotalValue.text = "$newSum/19"
                 makeEvalColor(newSum)
+                everythingIsEntered = true
             }
         }
     }
@@ -132,6 +160,6 @@ class MainFragment :
         measuredValue: Double,
         measuredIsChecked: Boolean
     ) {
-        evalViewModel.changeInputValue(diseaseParameter, measuredValue, measuredIsChecked)
+        mainViewModel.changeInputValue(diseaseParameter, measuredValue, measuredIsChecked)
     }
 }

@@ -1,66 +1,100 @@
 package com.github.newscalculator.ui.mainFragment
 
-import android.content.res.Resources
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.newscalculator.diseaseparameterstypes.AbstractDiseaseType
+import com.github.newscalculator.data.LoadParametersService
+import com.github.newscalculator.domain.entities.AbstractDiseaseType
+import com.github.newscalculator.domain.usecases.DiseaseTypeUseCase
+import com.github.newscalculator.util.SingleLiveEvent
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
-    private val repository = MainRepository()
+/**
+ * Хранит состояние главного экрана с RecyclerView
+ * @param loadingService сервис получения списка измеряемых параметров
+ * @property itemsList список оцениваемых параметров (строки таблицы NEWS)
+ * @property changedItem переменная для измененного параметра. Используется для передачи в RecyclerView
+ * @property everythingIsEnteredEvent событие об изменении всех обязательных параметров
+ * @property totalSum сумма всех баллов
+ */
 
-    //список оцениваемых параметров (строки таблцы NEWS)
-    private val evalParametersList = MutableLiveData<MutableList<AbstractDiseaseType>>()
-    val getEvalParametersList: LiveData<MutableList<AbstractDiseaseType>>
-        get() = evalParametersList
+class MainViewModel(private val loadingService: LoadParametersService) : ViewModel() {
 
-    //измененный параметр состояния
-    private val changedParameter = MutableLiveData<AbstractDiseaseType>()
-    val getChangedParameter: LiveData<AbstractDiseaseType>
-        get() = changedParameter
+    private val itemsList = MutableLiveData<MutableList<AbstractDiseaseType>>()
+    val getItemsList: LiveData<MutableList<AbstractDiseaseType>>
+        get() = itemsList
 
-    //событие об изменении всех параметров
-    private val everythingIsEnteredLiveData = MutableLiveData<Int>()
+    private val changedItem = MutableLiveData<AbstractDiseaseType>()
+    val getChangedItem: LiveData<AbstractDiseaseType>
+        get() = changedItem
+
+    private val everythingIsEnteredEvent = SingleLiveEvent<Int>()
     val getEverythingIsEntered: LiveData<Int>
-        get() = everythingIsEnteredLiveData
+        get() = everythingIsEnteredEvent
 
-    //начальная загрузка таблицы
-    fun getEvalList(res: Resources) {
-        viewModelScope.launch {
-            val evalList = repository.generateEval(res)
-            evalParametersList.postValue(evalList)
+    private val totalSum: Int
+        get() = itemsList.value.orEmpty().sumBy {
+            it.getResultPoints()
+        }
+
+    /**
+     * Начальная загрузка таблицы
+     */
+    fun getItemsList() {
+        if (itemsList.value == null)
+            viewModelScope.launch(Dispatchers.IO) {
+                val evalList = loadingService.loadParameters()
+                itemsList.postValue(evalList)
+            }
+    }
+
+    fun resetItem(item: AbstractDiseaseType) {
+        item.restoreDefault()
+        changedItem.postValue(item)
+    }
+
+    suspend fun refreshList(oldList: MutableList<AbstractDiseaseType>) {
+        oldList.filter {
+            it.isModified
+        }.forEach {
+            it.restoreDefault()
+            changedItem.postValue(it)
+            delay(100)
         }
     }
 
+    /**
+     * Изменение текущего параметра и оповещение подписчиков.
+     * @param itemToChange Входной параметр для изменения
+     * @param inputDoubleValue Измеренное числовое значение (температура, давление и т.д.)
+     * @param inputBooleanValue Измеренное логическое значение (инсуфляция, изменение сознания)
+     * @see DiseaseTypeUseCase
+     */
     fun changeInputValue(
-        parameterToChange: AbstractDiseaseType,
+        itemToChange: AbstractDiseaseType,
         inputDoubleValue: Double,
         inputBooleanValue: Boolean
     ) {
-        repository.changeEvalParameter(
-            parameterToChange,
+        DiseaseTypeUseCase().changeEvalParameter(
+            itemToChange,
             inputDoubleValue,
             inputBooleanValue
         )
-        changedParameter.postValue(parameterToChange)
+        changedItem.postValue(itemToChange)
     }
 
+    /**
+     * Проверка внесения изменений во все обязательные поля и оповещение подписчиков
+     */
     fun checkEverythingIsEntered() {
-        evalParametersList.value.orEmpty().filter {
-            it.required
-        }.forEach {
-            if (it.isModified.not()) return
+        itemsList.value.orEmpty().filter { currentItem ->
+            currentItem.required
+        }.forEach { currentItem ->
+            if (currentItem.isModified.not()) return
         }
-        everythingIsEnteredLiveData.postValue(countSum())
-    }
-
-    private fun countSum(): Int {
-        var sum = 0
-        evalParametersList.value.orEmpty().forEach {
-            sum += it.getResultPoints()
-        }
-        return sum
+        everythingIsEnteredEvent.postValue(totalSum)
     }
 }

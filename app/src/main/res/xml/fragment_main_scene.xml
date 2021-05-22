@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:defaultDuration="100">
 
-    <ConstraintSet android:id="@+id/start" />
+    <ConstraintSet android:id="@+id/stateParameterStart" />
 
-    <ConstraintSet android:id="@+id/end">
+    <ConstraintSet android:id="@+id/stateParameterEnd">
         <Constraint android:id="@id/coordinator" />
         <Constraint
             android:id="@+id/totalScore"
@@ -32,28 +32,28 @@
 
     <Transition android:id="@+id/transitionJumpStart"
         app:constraintSetEnd="@id/jumpStart"
-        app:constraintSetStart="@id/start"
+        app:constraintSetStart="@id/stateParameterStart"
         app:motionInterpolator="easeOut">
     </Transition>
 
     <Transition
         app:autoTransition="animateToEnd"
-        app:constraintSetEnd="@id/start"
+        app:constraintSetEnd="@id/stateParameterStart"
         app:constraintSetStart="@id/jumpStart"
         app:duration="500"
         app:motionInterpolator="bounce" />
 
     <Transition
         android:id="@+id/transitionScale"
-        app:constraintSetEnd="@id/end"
-        app:constraintSetStart="@+id/start"
+        app:constraintSetEnd="@id/stateParameterEnd"
+        app:constraintSetStart="@+id/stateParameterStart"
         app:motionInterpolator="linear">
     </Transition>
 
     <Transition
         app:autoTransition="animateToEnd"
-        app:constraintSetEnd="@id/start"
-        app:constraintSetStart="@id/end"
+        app:constraintSetEnd="@id/stateParameterStart"
+        app:constraintSetStart="@id/stateParameterEnd"
         app:motionInterpolator="linear" />
 
 </MotionScene>

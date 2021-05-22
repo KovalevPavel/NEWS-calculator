@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:layoutDescription="@xml/item_evaluation_parameter_scene">
+    android:layout_height="wrap_content">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/parentCard"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginBottom="2dp"
+        android:layout_margin="2dp"
         android:clickable="true"
         android:focusable="true"
         android:foreground="?selectableItemBackground"
@@ -36,23 +32,46 @@
                 android:layout_margin="8dp"
                 android:lines="2"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/verticalDivider"
+                app:layout_constraintEnd_toEndOf="@id/verticalDividerStart"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Частота сердечных сокращений" />
 
             <View
-                android:id="@+id/verticalDivider"
+                android:id="@+id/verticalDividerStart"
                 android:layout_width="1dp"
                 android:layout_height="0dp"
                 android:layout_marginEnd="60dp"
-                android:background="?colorSecondary"
+                android:background="@drawable/divider_background"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/verticalDividerEnd"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textViewEvalPoints"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="22sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/verticalDividerEnd"
+                app:layout_constraintStart_toEndOf="@id/verticalDividerStart"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="90\nинс" />
+
+            <View
+                android:id="@+id/verticalDividerEnd"
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="60dp"
+                android:background="@drawable/divider_background"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/textViewEvalPoints"
+                android:id="@+id/textView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -61,20 +80,11 @@
                 android:textSize="22sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/verticalDivider"
+                app:layout_constraintStart_toEndOf="@id/verticalDividerEnd"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="90\nинс" />
+                tools:text="3\n2" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
-
-    <com.github.newscalculator.ui.customView.BookmarkCustomView
-        android:id="@+id/bookmark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:elevation="2dp"
-        app:layout_constraintEnd_toEndOf="@id/parentCard"
-        app:layout_constraintTop_toTopOf="@id/parentCard" />
-</androidx.constraintlayout.motion.widget.MotionLayout>
+</LinearLayout>

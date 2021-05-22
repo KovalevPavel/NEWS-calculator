@@ -1,19 +1,21 @@
-package com.github.newscalculator.ui.editvaluedialog
+package com.github.newscalculator.ui.editvalueDialog
 
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.core.view.isVisible
-import com.github.newscalculator.databinding.DialogEditvalueBinding
-import com.github.newscalculator.diseaseparameterstypes.AbstractDiseaseType
-import com.github.newscalculator.diseaseparameterstypes.CombinedDiseaseType
+import com.github.newscalculator.databinding.DialogEditValueBinding
+import com.github.newscalculator.domain.entities.AbstractDiseaseType
+import com.github.newscalculator.domain.entities.CombinedDiseaseType
 
-/*
-Класс отслеживает вводимые данные в EditText.
-При достижении определенного количества введенных символов автоматически вводится '.'
+
+/**
+ * Отслеживает вводимые в EditText данные
+ * @property deleting Флаг, показывающий состояние ввода:
+ * - false если пользователь вводит символы
+ * - true если пользователь удаляет символы
  */
-
 class MyTextWatcher(
-    private val binder: DialogEditvalueBinding,
+    private val binder: DialogEditValueBinding,
     private val diseaseParameter: AbstractDiseaseType,
 ) : TextWatcher {
     private var deleting = false

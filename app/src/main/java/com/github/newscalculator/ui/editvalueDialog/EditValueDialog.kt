@@ -1,4 +1,4 @@
-package com.github.newscalculator.ui.editvaluedialog
+package com.github.newscalculator.ui.editvalueDialog
 
 import android.app.Dialog
 import android.graphics.Color
@@ -9,25 +9,36 @@ import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.navArgs
-import com.github.newscalculator.databinding.DialogEditvalueBinding
-import com.github.newscalculator.diseaseparameterstypes.AbstractDiseaseType
-import com.github.newscalculator.diseaseparameterstypes.CheckableDiseaseType
+import com.github.newscalculator.MyApplication
+import com.github.newscalculator.databinding.DialogEditValueBinding
+import com.github.newscalculator.domain.entities.AbstractDiseaseType
+import com.github.newscalculator.domain.entities.CheckableDiseaseType
 import com.github.newscalculator.moshi.EvalTypes
-import com.github.newscalculator.ui.editvaluedialog.dialogContents.DialogCombine
-import com.github.newscalculator.ui.editvaluedialog.dialogContents.DialogNumerical
-import com.github.newscalculator.ui.editvaluedialog.dialogContents.DialogSwitch
+import com.github.newscalculator.ui.editvalueDialog.dialogContents.DialogCombine
+import com.github.newscalculator.ui.editvalueDialog.dialogContents.DialogContent
+import com.github.newscalculator.ui.editvalueDialog.dialogContents.DialogNumerical
+import com.github.newscalculator.ui.editvalueDialog.dialogContents.DialogSwitch
 import com.github.newscalculator.ui.mainFragment.ConnectionToDialog
 import com.github.newscalculator.util.containsWrongChars
 import com.github.newscalculator.util.truncation
 
+/**
+ * Диалог ввода/редактирования измеренного значения
+ *
+ * В методе [onStart] первым делом устанавливаем прозрачный цвет фона для контейнера диалога
+ * Это необходимо, чтобы кастомная разметка отображалась корректно (иначе вокруг скруглений рамки будут белые острые кромки)
+ * @property _binder Объект типа [DialogEditValueBinding] для осуществления viewBinding
+ * @property args Аргументы, полученные от вызывающего объекта
+ * @property parentEntity Объект, который вызвал данный диалог (активити или фрагмент)
+ */
 class EditValueDialog : DialogFragment() {
-    private val repository = EditValueRepository()
+    private val newsUseCase = MyApplication.appComponent.getNEWSUseCase()
     private val args: EditValueDialogArgs by navArgs()
     private lateinit var inputDiseaseParameter: AbstractDiseaseType
     private lateinit var dialogContentType: DialogContent
 
-    private var _binder: DialogEditvalueBinding? = null
-    private val binder: DialogEditvalueBinding
+    private var _binder: DialogEditValueBinding? = null
+    private val binder: DialogEditValueBinding
         get() = _binder!!
 
     private val parentEntity: ConnectionToDialog
@@ -38,16 +49,16 @@ class EditValueDialog : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val inflater = LayoutInflater.from(requireContext())
-        _binder = DialogEditvalueBinding.inflate(inflater)
+        _binder = DialogEditValueBinding.inflate(inflater)
         inputDiseaseParameter = args.inputEvalParameter
         setDialogContentType()
     }
 
     private fun setDialogContentType() {
         dialogContentType = when (inputDiseaseParameter.type) {
-            EvalTypes.Numerical -> DialogNumerical(binder, inputDiseaseParameter)
-            EvalTypes.Checkable -> DialogSwitch(binder, inputDiseaseParameter)
-            EvalTypes.Combined -> DialogCombine(binder, inputDiseaseParameter)
+            EvalTypes.NUMERICAL -> DialogNumerical(binder, inputDiseaseParameter)
+            EvalTypes.CHECKABLE -> DialogSwitch(binder, inputDiseaseParameter)
+            EvalTypes.COMBINED -> DialogCombine(binder, inputDiseaseParameter)
         }
     }
 
@@ -55,6 +66,7 @@ class EditValueDialog : DialogFragment() {
         super.onStart()
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialogContentType.setUI()
+        //обработка нажатия на кнопку
         binder.btnConfirm.setOnClickListener {
             val evalValue = convertEvalValue()
             parentEntity.onDialogClicked(
@@ -62,6 +74,7 @@ class EditValueDialog : DialogFragment() {
                 evalValue.truncation(),
                 inputDiseaseParameter.getBooleanParameter
             )
+            //скрытие диалога
             dismiss()
         }
     }
@@ -87,10 +100,15 @@ class EditValueDialog : DialogFragment() {
         showSoftInput()
     }
 
+    /**
+     * Автоматический показ виртуальной клавиатуры.
+     */
     private fun showSoftInput() {
         if (inputDiseaseParameter is CheckableDiseaseType) return
         binder.apply {
-            editTextNumberSigned.setText(repository.convertEvalValue(inputDiseaseParameter))
+            //утсанавливаем текст (если он ранее уже был введен)
+            editTextNumberSigned.setText(newsUseCase.convertEvalValue(inputDiseaseParameter))
+            //показываем клавиатуру
             editTextNumberSigned.requestFocus()
             editTextNumberSigned.setSelection(0, editTextNumberSigned.text?.length ?: 0)
             dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
@@ -99,6 +117,7 @@ class EditValueDialog : DialogFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        //разрешаем вновь вызывать данный диалог
         parentEntity.allowToCallDialog = true
     }
 }

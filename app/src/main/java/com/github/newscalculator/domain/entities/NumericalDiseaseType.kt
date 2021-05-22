@@ -1,4 +1,4 @@
-package com.github.newscalculator.diseaseparameterstypes
+package com.github.newscalculator.domain.entities
 
 import com.github.newscalculator.moshi.EvalTypes
 import com.squareup.moshi.JsonClass
@@ -14,7 +14,7 @@ data class NumericalDiseaseType(
     override val arrayOfDiseasePoints: Array<Int>,
     override val fractional: Boolean,
     override val required: Boolean,
-) : AbstractDiseaseType(EvalTypes.Numerical) {
+) : AbstractDiseaseType(EvalTypes.NUMERICAL) {
 
     override fun evaluatePoints() {
         //ближайший индекс из таблицы NEWS
@@ -37,4 +37,9 @@ data class NumericalDiseaseType(
     }
 
     override fun createPointsString() = "${getResultPoints()}"
+    override fun restoreDefault() {
+        setMeasuredParameter(-1.0)
+        setMeasuredPoints(0)
+        isModified = false
+    }
 }
