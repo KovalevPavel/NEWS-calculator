@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "640605346506",
+    "project_id": "news-calculator",
+    "storage_bucket": "news-calculator.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:640605346506:android:478d94e5bbdab22a6b3233",
+        "android_client_info": {
+          "package_name": "com.github.newscalculator"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "640605346506-1klsho4frbj0sgsbbb7qu9gjj3sm4f3i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYAk5TzGh9_fHi3c9zlhOWr9qU9DZYDcs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "640605346506-1klsho4frbj0sgsbbb7qu9gjj3sm4f3i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
