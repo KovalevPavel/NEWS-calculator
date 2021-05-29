@@ -1,8 +1,10 @@
 package com.github.newscalculator.di.modules
 
-import android.content.Context
 import com.github.newscalculator.data.LoadParametersService
-import com.github.newscalculator.data.local.ParametersLoadLocal
+import com.github.newscalculator.data.remote.ParametersLoadRemote
+import com.github.newscalculator.domain.usecases.HandleLocalParametersListUseCase
+import com.github.newscalculator.domain.usecases.SharedPrefsUseCase
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 
@@ -12,7 +14,11 @@ import dagger.Provides
 @Module
 class LoadingServiceModule {
     @Provides
-    fun provideLoadingService(context: Context): LoadParametersService {
-        return ParametersLoadLocal(context)
+    fun provideLoadingService(
+        db: FirebaseFirestore,
+        sPrefsUseCase: SharedPrefsUseCase,
+        localFilesUseCase: HandleLocalParametersListUseCase
+    ): LoadParametersService {
+        return ParametersLoadRemote(db, sPrefsUseCase, localFilesUseCase)
     }
 }

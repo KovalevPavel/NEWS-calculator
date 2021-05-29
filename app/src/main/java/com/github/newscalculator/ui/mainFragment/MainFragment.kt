@@ -32,6 +32,7 @@ class MainFragment :
         super.onViewCreated(view, savedInstanceState)
         initUI()
         initToolbar()
+
     }
 
     private fun initToolbar() {

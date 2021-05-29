@@ -46,8 +46,9 @@ class MainViewModel(private val loadingService: LoadParametersService) : ViewMod
     fun getItemsList() {
         if (itemsList.value == null)
             viewModelScope.launch(Dispatchers.IO) {
-                val evalList = loadingService.loadParameters()
-                itemsList.postValue(evalList)
+                loadingService.loadParameters {
+                    itemsList.postValue(it)
+                }
             }
     }
 

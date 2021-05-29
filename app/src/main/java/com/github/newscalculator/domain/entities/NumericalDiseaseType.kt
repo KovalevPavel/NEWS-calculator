@@ -42,4 +42,18 @@ data class NumericalDiseaseType(
         setMeasuredPoints(0)
         isModified = false
     }
+
+    companion object {
+        fun convertFromMap(map: MutableMap<String, Any>): AbstractDiseaseType {
+            return NumericalDiseaseType(
+                id = map[ID_] as Long,
+                parameterName = map[PARAM_NAME_] as String,
+                normalValue = (map[NORM_VALUE_] as Number).toDouble(),
+                arrayOfEvalLevels = (map[ARRAY_LEVELS_] as ArrayList<Number>).convertToDoubleArray(),
+                arrayOfDiseasePoints = (map[ARRAY_POINTS_] as ArrayList<Number>).convertToIntArray(),
+                fractional = map[FRACTIONAL_] as Boolean,
+                required = map[REQUIRED_] as Boolean,
+            )
+        }
+    }
 }

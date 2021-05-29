@@ -11,6 +11,8 @@ import com.google.firebase.messaging.FirebaseMessaging
 class MyApplication : Application() {
     companion object {
         lateinit var appComponent: AppComponent
+        const val COLLECTION_NAME = "newsItems"
+        const val DB_VERSION = "dbVersion"
     }
 
     override fun onCreate() {

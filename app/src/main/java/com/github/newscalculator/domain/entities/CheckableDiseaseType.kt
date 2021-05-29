@@ -30,4 +30,19 @@ data class CheckableDiseaseType(
         setBooleanPoints(0)
         isModified = false
     }
+
+    companion object {
+        fun convertFromMap(map: MutableMap<String, Any>): AbstractDiseaseType {
+            return CheckableDiseaseType(
+                id = map[ID_] as Long,
+                parameterName = map[PARAM_NAME_] as String,
+                normalValue = (map[NORM_VALUE_] as Number).toDouble(),
+                maxCheckableValue = (map[MAX_CHECK_VAL_] as Long).toInt(),
+                shortString = map[SHORT_STRING_] as String,
+                fractional = map[FRACTIONAL_] as Boolean,
+                required = map[REQUIRED_] as Boolean
+            )
+        }
+    }
+
 }

@@ -26,7 +26,31 @@ abstract class AbstractDiseaseType(
     @Json(name = "type") val type: EvalTypes,
 ) : Parcelable {
     companion object {
+        fun <T: Number> ArrayList<T>.convertToDoubleArray(): Array<Double> {
+            return Array(this.size) {
+                this[it].toDouble()
+            }
+        }
+
+        fun <T: Number> ArrayList<T>.convertToIntArray(): Array<Int> {
+            return Array(this.size) {
+                this[it].toInt()
+            }
+        }
+
         private const val ARRAY_SIZE = 2
+        const val ID_ = "id"
+        const val PARAM_NAME_ = "parameterName"
+        const val TYPE_ = "type"
+        const val NORM_VALUE_ = "normalValue"
+        const val FRACTIONAL_ = "fractional"
+        const val REQUIRED_ = "required"
+        const val MAX_CHECK_VAL_ = "maxCheckableValue"
+        const val LABEL_ = "label"
+        const val SHORT_STRING_ = "shortString"
+        const val ARRAY_LEVELS_ = "arrayOfEvalLevels"
+        const val ARRAY_POINTS_ = "arrayOfDiseasePoints"
+        const val THRESHOLD_ = "threshold"
     }
 
     abstract val id: Long

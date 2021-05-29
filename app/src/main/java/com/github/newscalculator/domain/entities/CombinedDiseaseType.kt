@@ -55,4 +55,22 @@ data class CombinedDiseaseType(
         setBooleanPoints(0)
         isModified = false
     }
+
+    companion object {
+        fun convertFromMap(map: MutableMap<String, Any>): AbstractDiseaseType {
+            return CombinedDiseaseType(
+                id = map[ID_] as Long,
+                parameterName = map[PARAM_NAME_] as String,
+                normalValue = ((map[NORM_VALUE_] as? Long)
+                    ?: (map[NORM_VALUE_] as Double)).toDouble(),
+                arrayOfEvalLevels = (map[ARRAY_LEVELS_] as ArrayList<Number>).convertToDoubleArray(),
+                arrayOfDiseasePoints = (map[ARRAY_POINTS_] as ArrayList<Number>).convertToIntArray(),
+                maxCheckableValue = (map[MAX_CHECK_VAL_] as Long).toInt(),
+                shortString = map[SHORT_STRING_] as String,
+                fractional = map[FRACTIONAL_] as Boolean,
+                required = map[REQUIRED_] as Boolean,
+                threshold = (map[THRESHOLD_] as Number).toDouble(),
+            )
+        }
+    }
 }
