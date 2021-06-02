@@ -1,6 +1,5 @@
 package com.github.newscalculator.domain.entities
 
-import com.github.newscalculator.moshi.EvalTypes
 import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 

@@ -13,7 +13,7 @@ import com.github.newscalculator.MyApplication
 import com.github.newscalculator.databinding.DialogEditValueBinding
 import com.github.newscalculator.domain.entities.AbstractDiseaseType
 import com.github.newscalculator.domain.entities.CheckableDiseaseType
-import com.github.newscalculator.moshi.EvalTypes
+import com.github.newscalculator.domain.entities.EvalTypes
 import com.github.newscalculator.ui.editvalueDialog.dialogContents.DialogCombine
 import com.github.newscalculator.ui.editvalueDialog.dialogContents.DialogContent
 import com.github.newscalculator.ui.editvalueDialog.dialogContents.DialogNumerical
@@ -117,6 +117,7 @@ class EditValueDialog : DialogFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        _binder = null
         //разрешаем вновь вызывать данный диалог
         parentEntity.allowToCallDialog = true
     }

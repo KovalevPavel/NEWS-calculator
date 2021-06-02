@@ -1,4 +1,4 @@
-package com.github.newscalculator.ui.mainFragment
+package com.github.newscalculator.domain.usecases
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

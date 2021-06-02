@@ -13,6 +13,9 @@
             android:id="@+id/action_checkListFragment_to_editValueDialog"
             app:destination="@id/editValueDialog"
             app:launchSingleTop="true" />
+        <action
+            android:id="@+id/action_checkListFragment_to_dialogRetry"
+            app:destination="@id/dialogRetry" />
     </fragment>
     <dialog
         android:id="@+id/editValueDialog"
@@ -23,4 +26,9 @@
             android:name="inputEvalParameter"
             app:argType="com.github.newscalculator.domain.entities.AbstractDiseaseType" />
     </dialog>
+    <dialog
+        android:id="@+id/dialogRetry"
+        tools:layout="@layout/dialog_retry_sync"
+        android:name="com.github.newscalculator.ui.retryDialog.DialogRetry"
+        android:label="DialogRetry" />
 </navigation>

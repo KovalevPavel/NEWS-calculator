@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">NEWS-калькулятор</string>
-    <string name="enterValueText">Введите замеренное значение</string>
     <string name="defaultTotalValue">__/19</string>
+    <string name="textRetry">Данные не синхронизированы."\u000D"Проверьте соединение с Интернет</string>
+    <string name="notSynchronized">Данные не синхронизированы</string>
+    <string name="checkInternet">Проверьте соединение с Интернет</string>
+    <string name="lastLocalLoaded">Загружена последняя сохраненная версия</string>
 </resources>

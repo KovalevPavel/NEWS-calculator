@@ -1,6 +1,6 @@
 package com.github.newscalculator.di.modules
 
-import android.content.Context
+import android.app.Application
 import dagger.Module
 import dagger.Provides
 
@@ -8,7 +8,8 @@ import dagger.Provides
  * Модуль предоставления контекста
  */
 @Module
-class ContextModule (private val context: Context) {
+class ContextModule (private val application: Application) {
+
     @Provides
-    fun provideContext() = context
+    fun provideApplication() = application
 }

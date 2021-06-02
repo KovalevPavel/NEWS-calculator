@@ -1,4 +1,4 @@
-package com.github.newscalculator.moshi
+package com.github.newscalculator.domain.entities
 
 /**
  * Типы объектов [com.github.newscalculator.domain.entities.AbstractDiseaseType]

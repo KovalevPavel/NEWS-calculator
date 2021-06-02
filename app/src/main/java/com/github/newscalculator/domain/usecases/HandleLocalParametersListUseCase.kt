@@ -1,12 +1,8 @@
 package com.github.newscalculator.domain.usecases
 
-import android.content.Context
+import android.app.Application
 import android.widget.Toast
-import com.github.newscalculator.domain.entities.AbstractDiseaseType
-import com.github.newscalculator.domain.entities.CheckableDiseaseType
-import com.github.newscalculator.domain.entities.CombinedDiseaseType
-import com.github.newscalculator.domain.entities.NumericalDiseaseType
-import com.github.newscalculator.moshi.EvalTypes
+import com.github.newscalculator.domain.entities.*
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
@@ -20,7 +16,7 @@ import java.io.File
 /**
  * Класс с операциями чтения/записи списка измеряемых параметров
  */
-class HandleLocalParametersListUseCase(private val context: Context) {
+class HandleLocalParametersListUseCase(private val applicationContext: Application) {
     companion object {
         private const val LABEL_KEY = "type"
         private const val FILE_NAME = "eval_item_list.json"
@@ -44,7 +40,7 @@ class HandleLocalParametersListUseCase(private val context: Context) {
     private val fileOperationsCoroutineExceptionHandler =
         CoroutineExceptionHandler { _, throwable ->
             Toast.makeText(
-                context,
+                applicationContext,
                 "Ошибка при работе с файловой системой:\n$throwable",
                 Toast.LENGTH_LONG
             ).show()
@@ -56,7 +52,7 @@ class HandleLocalParametersListUseCase(private val context: Context) {
      */
     suspend fun writeNewParameters(parametersList: MutableList<AbstractDiseaseType>) {
         withContext(Dispatchers.IO + fileOperationsCoroutineExceptionHandler) {
-            val file = File(context.filesDir, FILE_NAME)
+            val file = File(applicationContext.filesDir, FILE_NAME)
             file.outputStream().use {
                 it.write(moshiAdapter.toJson(parametersList).toByteArray())
             }
@@ -77,7 +73,7 @@ class HandleLocalParametersListUseCase(private val context: Context) {
     //    Чтение данных из Json.
     private fun readDataFromJSON(): JSONArray {
         return JSONArray(
-            File(context.filesDir, FILE_NAME).bufferedReader().use {
+            File(applicationContext.filesDir, FILE_NAME).bufferedReader().use {
                 it.readText()
             }
         )

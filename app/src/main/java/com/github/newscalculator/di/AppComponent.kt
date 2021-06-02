@@ -4,7 +4,8 @@ import com.github.newscalculator.data.LoadParametersService
 import com.github.newscalculator.di.modules.*
 import com.github.newscalculator.domain.usecases.DiseaseTypeUseCase
 import com.github.newscalculator.domain.usecases.HandleLocalParametersListUseCase
-import com.github.newscalculator.ui.mainFragment.MainViewModel
+import com.github.newscalculator.domain.usecases.MainViewModel
+import com.github.newscalculator.domain.usecases.SharedPrefsUseCase
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Component
 import javax.inject.Singleton
@@ -24,6 +25,7 @@ import javax.inject.Singleton
 @Singleton
 interface AppComponent {
     fun getLoadingService(): LoadParametersService
+    fun getSharedPrefsUseCase(): SharedPrefsUseCase
     fun getMainViewModel(): MainViewModel
     fun getNEWSUseCase(): DiseaseTypeUseCase
     fun getDatabaseReference(): FirebaseFirestore

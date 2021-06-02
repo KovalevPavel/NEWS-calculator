@@ -1,6 +1,6 @@
 package com.github.newscalculator.di.modules
 
-import android.content.Context
+import android.app.Application
 import com.github.newscalculator.domain.usecases.DiseaseTypeUseCase
 import com.github.newscalculator.domain.usecases.HandleLocalParametersListUseCase
 import com.github.newscalculator.domain.usecases.SharedPrefsUseCase
@@ -16,8 +16,8 @@ class UseCaseModule {
     fun provideNEWSEntityUseCase() = DiseaseTypeUseCase()
 
     @Provides
-    fun provideSPrefsUseCase(context: Context) = SharedPrefsUseCase(context)
+    fun provideSPrefsUseCase(application: Application) = SharedPrefsUseCase(application)
 
     @Provides
-    fun provideHandleLocalFilesUseCase(context: Context) = HandleLocalParametersListUseCase(context)
+    fun provideHandleLocalFilesUseCase(application: Application) = HandleLocalParametersListUseCase(application)
 }

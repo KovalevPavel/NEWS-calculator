@@ -11,5 +11,8 @@ interface LoadParametersService {
      *
      * @return Список [MutableList] измеряемых параметров [AbstractDiseaseType]
      */
-    suspend fun loadParameters(onLoadParameters: (MutableList<AbstractDiseaseType>) -> Unit)
+    suspend fun loadParameters(
+        onLoadParameters: (MutableList<AbstractDiseaseType>) -> Unit,
+        onFailLoad: (critical: Boolean, itemList: MutableList<AbstractDiseaseType>?) -> Unit
+    )
 }

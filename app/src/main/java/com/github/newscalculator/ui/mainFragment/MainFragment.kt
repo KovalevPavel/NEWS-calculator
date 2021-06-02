@@ -10,17 +10,24 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.newscalculator.R
 import com.github.newscalculator.databinding.FragmentMainBinding
 import com.github.newscalculator.domain.entities.AbstractDiseaseType
+import com.github.newscalculator.domain.usecases.MainViewModel
+import com.github.newscalculator.domain.usecases.MyViewModelFactory
 import com.github.newscalculator.ui.mainFragment.recyclerView.Decoration
 import com.github.newscalculator.ui.mainFragment.recyclerView.DiseaseAdapter
+import com.github.newscalculator.ui.retryDialog.DialogRetry
 import com.github.newscalculator.util.AutoClearedValue
 import com.github.newscalculator.util.FragmentViewBinding
+import com.github.newscalculator.util.showToast
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainFragment :
     FragmentViewBinding<FragmentMainBinding>(FragmentMainBinding::inflate),
-    ConnectionToDialog {
+    ConnectionToDialog, ConnectionToRetryDialog {
     private var everythingIsEntered = false
     private var diseaseAdapter by AutoClearedValue<DiseaseAdapter>()
+
+    private val retryDialog = DialogRetry()
 
     private val mainViewModel: MainViewModel by viewModels {
         MyViewModelFactory()
@@ -32,7 +39,6 @@ class MainFragment :
         super.onViewCreated(view, savedInstanceState)
         initUI()
         initToolbar()
-
     }
 
     private fun initToolbar() {
@@ -40,11 +46,11 @@ class MainFragment :
             when (it.itemId) {
 //                кнопка "удалить"
                 R.id.id_delete -> {
+                    reloadList()
                     binder.motionLayout.apply {
                         setTransition(R.id.transitionScale)
                         transitionToEnd()
                     }
-                    reloadList()
                     resetUI()
                     true
                 }
@@ -68,9 +74,10 @@ class MainFragment :
     }
 
     private fun initUI() {
-        diseaseAdapter = DiseaseAdapter({ position ->
+        if (retryDialog.isAdded) retryDialog.dismiss()
+        diseaseAdapter = DiseaseAdapter(onItemClick = { position ->
             translateItemIdIntoDialog(position)
-        }, { position ->
+        }, onItemLongClick = { position ->
             val everythingWasEntered = everythingIsEntered
             reloadItem(position)
             if (diseaseAdapter.diseaseList[position].required) {
@@ -103,7 +110,7 @@ class MainFragment :
     }
 
     private fun reloadList() {
-        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+        viewLifecycleOwner.lifecycle.coroutineScope.launch(Dispatchers.IO) {
             mainViewModel.refreshList(diseaseAdapter.diseaseList)
         }
     }
@@ -114,7 +121,6 @@ class MainFragment :
 
     private fun bindViewModel() {
         mainViewModel.apply {
-
             getItemsList.observe(viewLifecycleOwner) { newList ->
                 resetUI()
                 diseaseAdapter.diseaseList = newList
@@ -132,6 +138,14 @@ class MainFragment :
                 binder.totalScore.customBinder.textTotalValue.text = "$newSum/19"
                 makeEvalColor(newSum)
                 everythingIsEntered = true
+            }
+
+            getLoadErrorEvent.observe(viewLifecycleOwner) {
+                retryDialog.show(childFragmentManager, null)
+            }
+
+            getToastEvent.observe(viewLifecycleOwner) {toastString ->
+                showToast(requireContext(), toastString)
             }
         }
     }
@@ -162,5 +176,15 @@ class MainFragment :
         measuredIsChecked: Boolean
     ) {
         mainViewModel.changeInputValue(diseaseParameter, measuredValue, measuredIsChecked)
+    }
+
+    override fun doOnRetry() {
+        loadData()
+    }
+
+    override fun onStop() {
+//        убиваем диалог, если пользователь так и не загрузил данные
+        if (retryDialog.isAdded) retryDialog.dismissAllowingStateLoss()
+        super.onStop()
     }
 }

@@ -2,7 +2,6 @@ package com.github.newscalculator.domain.entities
 
 import android.os.Parcelable
 import com.github.newscalculator.domain.entities.AbstractDiseaseType.Companion.ARRAY_SIZE
-import com.github.newscalculator.moshi.EvalTypes
 import com.squareup.moshi.Json
 
 /**
