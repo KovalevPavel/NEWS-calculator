@@ -1,10 +1,13 @@
 package com.github.newscalculator.data.remote
 
+import android.app.Application
 import com.github.newscalculator.MyApplication
+import com.github.newscalculator.R
 import com.github.newscalculator.data.LoadParametersService
 import com.github.newscalculator.data.remote.ParametersLoadRemote.Companion.REFRESH_DELAY
 import com.github.newscalculator.domain.entities.*
 import com.github.newscalculator.domain.usecases.SharedPrefsUseCase
+import com.github.newscalculator.util.loggingDebug
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
@@ -24,21 +27,16 @@ import kotlinx.coroutines.withContext
  */
 class ParametersLoadRemote(
     private val db: FirebaseFirestore,
-    private val sPrefsUseCase: SharedPrefsUseCase
+    private val sPrefsUseCase: SharedPrefsUseCase,
+    private val context: Application
 ) : LoadParametersService {
     companion object {
         private const val REFRESH_DELAY = 43200000L
     }
 
-    private var resultList: MutableList<AbstractDiseaseType>? = null
-
-    /**
-     * Получение списка параметров
-     * @param onLoadParameters колбэк, который вызывается после завершения загрузки
-     */
     override suspend fun loadParameters(
-        onLoadParameters: (MutableList<AbstractDiseaseType>) -> Unit,
-        onFailLoad: (critical: Boolean, itemList: MutableList<AbstractDiseaseType>?) -> Unit
+        onLoadParameters: (MutableList<AbstractDiseaseType>, message: String?) -> Unit,
+        onFailLoad: (MutableList<AbstractDiseaseType>?, String?) -> Unit
     ) {
 //        пытаемся получить данные из локального хранилища
         getRemoteData(
@@ -47,9 +45,9 @@ class ParametersLoadRemote(
                 CoroutineScope(Dispatchers.IO).launch {
                     getRemoteData(Source.SERVER, { remoteData ->
                         val remoteItems = handleDataFromDatabase(remoteData)
-                        onLoadParameters(remoteItems)
+                        onLoadParameters(remoteItems, null)
                     }, {
-                        onFailLoad(true, null)
+                        onFailLoad(null, null)
                     })
                 }
             },
@@ -62,47 +60,26 @@ class ParametersLoadRemote(
                             CoroutineScope(Dispatchers.IO).launch {
                                 sPrefsUseCase.resetUpdateTime()
                                 val remoteItems = handleDataFromDatabase(remoteData)
-                                onLoadParameters(remoteItems)
+                                val string = context.getString(R.string.synchronized_successful)
+                                loggingDebug("updated: ")
+                                loggingDebug(string)
+                                onLoadParameters(remoteItems, string)
                             }
                         }, {
-                            onFailLoad(false, handleDataFromDatabase(itemsList))
+                            val string = context.getString(R.string.lastLocalLoaded)
+                            loggingDebug("last saved:")
+                            loggingDebug(string)
+                            onFailLoad(handleDataFromDatabase(itemsList), string)
                         })
                     } else {
-                        onLoadParameters(handleDataFromDatabase(itemsList))
+                        val string = context.getString(R.string.synchronized_successful)
+                        loggingDebug("no update: ")
+                        loggingDebug(string)
+                        onLoadParameters(handleDataFromDatabase(itemsList), string)
                     }
                 }
             }
         )
-/*
-        resultList?.let { itemsList ->
-            val lastUpdateTime = sPrefsUseCase.getLastLaunchTime()
-            if (System.currentTimeMillis() - lastUpdateTime > REFRESH_DELAY) {
-//                требуется синхронизация
-                getRemoteData(Source.SERVER, { remoteData ->
-                    CoroutineScope(Dispatchers.IO).launch {
-                        sPrefsUseCase.resetUpdateTime()
-                        val remoteItems = handleDataFromDatabase(remoteData)
-                        onLoadParameters(remoteItems)
-                    }
-                }, {
-                    onFailLoad(false, itemsList)
-                })
-            } else {
-                onLoadParameters(itemsList)
-            }
-        } ?: run {
-            getRemoteData(Source.SERVER, { remoteData ->
-                CoroutineScope(Dispatchers.IO).launch {
-                    val remoteItems = handleDataFromDatabase(remoteData)
-                    onLoadParameters(remoteItems)
-                }
-            }, {
-                onFailLoad(true, null)
-            })
-            return
-        }
-
- */
     }
 
     private fun handleDataFromDatabase(remoteData: MutableList<DocumentSnapshot>): MutableList<AbstractDiseaseType> {

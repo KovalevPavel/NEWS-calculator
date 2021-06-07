@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class SharedPrefsUseCase(private val applicationContext: Application) {
+class SharedPrefsUseCase(private val context: Application) {
     companion object {
         private const val PREFS_NAME = "news_shared_prefs"
         private const val LAST_TIMESTAMP = "last_timestamp"
@@ -57,6 +57,6 @@ class SharedPrefsUseCase(private val applicationContext: Application) {
     }
 
     private fun getSharedPrefs(): SharedPreferences {
-        return applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     }
 }

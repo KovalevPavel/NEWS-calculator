@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/support_Share"
+        android:checked="false"
+        android:icon="@android:drawable/ic_menu_share"
+        android:title="@string/share" />
+    <item
+        android:id="@+id/support_Rate"
+        android:checked="false"
+        android:icon="@android:drawable/star_off"
+        android:title="@string/rate" />
+    <item android:title="@string/help">
+        <menu>
+            <group>
+                <item
+                    android:id="@+id/support_Help"
+                    android:icon="@android:drawable/ic_menu_help"
+                    android:title="@string/instructions" />
+                <item
+                    android:id="@+id/support_Feedback"
+                    android:icon="@android:drawable/ic_menu_send"
+                    android:title="@string/send_bug_report" />
+            </group>
+        </menu>
+    </item>
+</menu>

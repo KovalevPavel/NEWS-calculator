@@ -1,8 +1,24 @@
 <resources>
     <string name="app_name">NEWS-калькулятор</string>
+
+    <!--    totalScore custom view-->
     <string name="defaultTotalValue">__/19</string>
-    <string name="textRetry">Данные не синхронизированы."\u000D"Проверьте соединение с Интернет</string>
-    <string name="notSynchronized">Данные не синхронизированы</string>
-    <string name="checkInternet">Проверьте соединение с Интернет</string>
-    <string name="lastLocalLoaded">Загружена последняя сохраненная версия</string>
+
+    <!--    server synchronization messages-->
+    <string name="textRetry">Данные не синхронизированы \n
+        Проверьте соединение с Интернет
+    </string>
+    <string name="synchronized_successful">Данные синхронизированы</string>
+    <string name="lastLocalLoaded">Данные не синхронизированы. Загружена последняя сохраненная версия</string>
+    <string name="synchronizing">Синхронизация…</string>
+
+    <!--    navigation menu resources-->
+    <string name="drawerOpen">open</string>
+    <string name="drawerClose">close</string>
+    <string name="send_bug_report">Предложить исправление</string>
+    <string name="instructions">Руководство</string>
+    <string name="help">Помощь</string>
+    <string name="rate">Оценить</string>
+    <string name="share">Поделиться</string>
+    <string name="main_delete">Удалить</string>
 </resources>

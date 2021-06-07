@@ -16,8 +16,8 @@ class UseCaseModule {
     fun provideNEWSEntityUseCase() = DiseaseTypeUseCase()
 
     @Provides
-    fun provideSPrefsUseCase(application: Application) = SharedPrefsUseCase(application)
+    fun provideSPrefsUseCase(context: Application) = SharedPrefsUseCase(context)
 
     @Provides
-    fun provideHandleLocalFilesUseCase(application: Application) = HandleLocalParametersListUseCase(application)
+    fun provideHandleLocalFilesUseCase(context: Application) = HandleLocalParametersListUseCase(context)
 }

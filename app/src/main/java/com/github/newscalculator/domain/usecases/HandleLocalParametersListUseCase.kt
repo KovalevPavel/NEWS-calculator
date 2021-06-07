@@ -1,6 +1,6 @@
 package com.github.newscalculator.domain.usecases
 
-import android.app.Application
+import android.content.Context
 import android.widget.Toast
 import com.github.newscalculator.domain.entities.*
 import com.squareup.moshi.Moshi
@@ -16,7 +16,7 @@ import java.io.File
 /**
  * Класс с операциями чтения/записи списка измеряемых параметров
  */
-class HandleLocalParametersListUseCase(private val applicationContext: Application) {
+class HandleLocalParametersListUseCase(private val context: Context) {
     companion object {
         private const val LABEL_KEY = "type"
         private const val FILE_NAME = "eval_item_list.json"
@@ -40,7 +40,7 @@ class HandleLocalParametersListUseCase(private val applicationContext: Applicati
     private val fileOperationsCoroutineExceptionHandler =
         CoroutineExceptionHandler { _, throwable ->
             Toast.makeText(
-                applicationContext,
+                context,
                 "Ошибка при работе с файловой системой:\n$throwable",
                 Toast.LENGTH_LONG
             ).show()
@@ -52,7 +52,7 @@ class HandleLocalParametersListUseCase(private val applicationContext: Applicati
      */
     suspend fun writeNewParameters(parametersList: MutableList<AbstractDiseaseType>) {
         withContext(Dispatchers.IO + fileOperationsCoroutineExceptionHandler) {
-            val file = File(applicationContext.filesDir, FILE_NAME)
+            val file = File(context.filesDir, FILE_NAME)
             file.outputStream().use {
                 it.write(moshiAdapter.toJson(parametersList).toByteArray())
             }
@@ -73,7 +73,7 @@ class HandleLocalParametersListUseCase(private val applicationContext: Applicati
     //    Чтение данных из Json.
     private fun readDataFromJSON(): JSONArray {
         return JSONArray(
-            File(applicationContext.filesDir, FILE_NAME).bufferedReader().use {
+            File(context.filesDir, FILE_NAME).bufferedReader().use {
                 it.readText()
             }
         )

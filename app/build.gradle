@@ -93,4 +93,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-messaging'
     implementation 'com.google.firebase:firebase-firestore-ktx'
+
+    implementation "androidx.drawerlayout:drawerlayout:1.1.1"
+
 }

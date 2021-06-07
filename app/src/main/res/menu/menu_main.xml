@@ -4,12 +4,6 @@
     <item
         android:id="@+id/id_delete"
         android:icon="@drawable/ic_delete"
-        android:title="Удалить"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/id_help"
-        android:icon="@drawable/baseline_help"
-        android:iconTint="@color/white"
-        android:title="Помощь"
-        app:showAsAction="always" />
+        android:title="@string/main_delete"
+        app:showAsAction="ifRoom" />
 </menu>

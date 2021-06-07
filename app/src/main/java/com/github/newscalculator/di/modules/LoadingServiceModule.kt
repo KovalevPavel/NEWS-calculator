@@ -1,5 +1,6 @@
 package com.github.newscalculator.di.modules
 
+import android.app.Application
 import com.github.newscalculator.data.LoadParametersService
 import com.github.newscalculator.data.remote.ParametersLoadRemote
 import com.github.newscalculator.domain.usecases.SharedPrefsUseCase
@@ -15,8 +16,9 @@ class LoadingServiceModule {
     @Provides
     fun provideLoadingService(
         db: FirebaseFirestore,
-        sPrefsUseCase: SharedPrefsUseCase
+        sPrefsUseCase: SharedPrefsUseCase,
+        context: Application
     ): LoadParametersService {
-        return ParametersLoadRemote(db, sPrefsUseCase)
+        return ParametersLoadRemote(db, sPrefsUseCase, context)
     }
 }

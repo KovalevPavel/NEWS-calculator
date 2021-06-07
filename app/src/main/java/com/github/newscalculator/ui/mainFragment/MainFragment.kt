@@ -1,8 +1,9 @@
 package com.github.newscalculator.ui.mainFragment
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
-import androidx.core.content.res.ResourcesCompat
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
@@ -17,13 +18,15 @@ import com.github.newscalculator.ui.mainFragment.recyclerView.DiseaseAdapter
 import com.github.newscalculator.ui.retryDialog.DialogRetry
 import com.github.newscalculator.util.AutoClearedValue
 import com.github.newscalculator.util.FragmentViewBinding
+import com.github.newscalculator.util.loggingDebug
 import com.github.newscalculator.util.showToast
+import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainFragment :
     FragmentViewBinding<FragmentMainBinding>(FragmentMainBinding::inflate),
-    ConnectionToDialog, ConnectionToRetryDialog {
+    ConnectionToDialog, ConnectionToRetryDialog, NavigationView.OnNavigationItemSelectedListener {
     private var everythingIsEntered = false
     private var diseaseAdapter by AutoClearedValue<DiseaseAdapter>()
 
@@ -39,12 +42,26 @@ class MainFragment :
         super.onViewCreated(view, savedInstanceState)
         initUI()
         initToolbar()
+        initNavigationView()
+        loadData()
+    }
+
+    private fun initNavigationView() {
+        val toggle = ActionBarDrawerToggle(
+            requireActivity(),
+            binder.layoutDrawer,
+            binder.bottomToolbar,
+            R.string.drawerOpen,
+            R.string.drawerClose
+        )
+        binder.layoutDrawer.addDrawerListener(toggle)
+        toggle.syncState()
+        binder.viewNavigation.setNavigationItemSelectedListener(this)
     }
 
     private fun initToolbar() {
         binder.bottomToolbar.setOnMenuItemClickListener {
             when (it.itemId) {
-//                кнопка "удалить"
                 R.id.id_delete -> {
                     reloadList()
                     binder.motionLayout.apply {
@@ -54,23 +71,17 @@ class MainFragment :
                     resetUI()
                     true
                 }
-//                кнопка "помощь"
-                R.id.id_help -> {
-                    binder.motionLayout.apply {
-                        setTransition(R.id.transitionScale)
-                        transitionToEnd()
-                    }
-                    true
-                }
                 else -> error("Unknown menu id")
             }
+        }
+        binder.bottomToolbar.setNavigationOnClickListener {
+
         }
     }
 
     override fun onStart() {
         super.onStart()
         bindViewModel()
-        loadData()
     }
 
     private fun initUI() {
@@ -100,12 +111,15 @@ class MainFragment :
         }
     }
 
-    private fun resetUI() {
-        binder.totalScore.customBinder.textTotalValue.setText(R.string.defaultTotalValue)
-        makeEvalColor(20)
+    private fun enableUI(enable: Boolean) {
+        binder.motionLayout.visibility = if (enable) View.VISIBLE else View.GONE
+        binder.synchronizingView.visibility = if (enable) View.GONE else View.VISIBLE
     }
 
+    private fun resetUI() = binder.totalScore.setTotalScore(-1)
+
     private fun loadData() {
+        enableUI(false)
         mainViewModel.getItemsList()
     }
 
@@ -115,14 +129,14 @@ class MainFragment :
         }
     }
 
-    private fun reloadItem(position: Int) {
+    private fun reloadItem(position: Int) =
         mainViewModel.resetItem(diseaseAdapter.diseaseList[position])
-    }
 
     private fun bindViewModel() {
         mainViewModel.apply {
             getItemsList.observe(viewLifecycleOwner) { newList ->
                 resetUI()
+                enableUI(true)
                 diseaseAdapter.diseaseList = newList
                 diseaseAdapter.notifyDataSetChanged()
             }
@@ -135,16 +149,16 @@ class MainFragment :
             }
 
             getEverythingIsEntered.observe(viewLifecycleOwner) { newSum ->
-                binder.totalScore.customBinder.textTotalValue.text = "$newSum/19"
-                makeEvalColor(newSum)
+                binder.totalScore.setTotalScore(newSum)
                 everythingIsEntered = true
             }
 
             getLoadErrorEvent.observe(viewLifecycleOwner) {
+                enableUI(true)
                 retryDialog.show(childFragmentManager, null)
             }
 
-            getToastEvent.observe(viewLifecycleOwner) {toastString ->
+            getToastEvent.observe(viewLifecycleOwner) { toastString ->
                 showToast(requireContext(), toastString)
             }
         }
@@ -159,17 +173,6 @@ class MainFragment :
         }
     }
 
-    private fun makeEvalColor(inputParam: Int) {
-        val color = when (inputParam) {
-            in (0 until 3) -> R.color.green
-            in (3 until 6) -> R.color.yellow
-            else -> R.color.red
-        }
-        binder.totalScore.customBinder.textTotalValue.setTextColor(
-            ResourcesCompat.getColor(resources, color, null)
-        )
-    }
-
     override fun onDialogClicked(
         diseaseParameter: AbstractDiseaseType,
         measuredValue: Double,
@@ -178,13 +181,23 @@ class MainFragment :
         mainViewModel.changeInputValue(diseaseParameter, measuredValue, measuredIsChecked)
     }
 
-    override fun doOnRetry() {
-        loadData()
-    }
+    override fun doOnRetry() = loadData()
 
     override fun onStop() {
 //        убиваем диалог, если пользователь так и не загрузил данные
         if (retryDialog.isAdded) retryDialog.dismissAllowingStateLoss()
         super.onStop()
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        val string = when (item.itemId) {
+            R.id.support_Feedback -> "feedback"
+            R.id.support_Rate -> "rate"
+            R.id.support_Help -> "help"
+            R.id.support_Share -> "share"
+            else -> "wrong"
+        }
+        loggingDebug("support menu item: $string")
+        return true
     }
 }

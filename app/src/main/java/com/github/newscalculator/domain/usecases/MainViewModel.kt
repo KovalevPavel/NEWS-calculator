@@ -1,10 +1,8 @@
 package com.github.newscalculator.domain.usecases
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.github.newscalculator.R
+import androidx.lifecycle.ViewModel
 import com.github.newscalculator.data.LoadParametersService
 import com.github.newscalculator.domain.entities.AbstractDiseaseType
 import com.github.newscalculator.util.SingleLiveEvent
@@ -23,9 +21,8 @@ import kotlinx.coroutines.launch
  */
 
 class MainViewModel(
-    private val loadingService: LoadParametersService,
-    private val myApplication: Application
-) : AndroidViewModel(myApplication) {
+    private val loadingService: LoadParametersService
+) : ViewModel() {
 
     private val itemsList = MutableLiveData<MutableList<AbstractDiseaseType>>()
     private val changedItem = MutableLiveData<AbstractDiseaseType>()
@@ -59,18 +56,20 @@ class MainViewModel(
     fun getItemsList() {
         if (itemsList.value == null) {
             CoroutineScope(Dispatchers.IO).launch {
-                loadingService.loadParameters({
-                    itemsList.postValue(it)
-                }, { critical, list ->
-                    val string =
-                        if (critical) myApplication.getString(R.string.checkInternet) else
-                            myApplication.getString(R.string.lastLocalLoaded)
-                    if (critical)
-                        loadErrorEvent.postValue(Unit)
+                loadingService.loadParameters(onLoadParameters = {list, message ->
+                    itemsList.postValue(list)
+                    message?.let {
+                        toastEvent.postValue(it)
+                    }
+                }, onFailLoad = { list, message ->
                     list?.let {
                         itemsList.postValue(it)
+                    }?: kotlin.run {
+                        loadErrorEvent.postValue(Unit)
                     }
-                    toastEvent.postValue(myApplication.getString(R.string.notSynchronized)+". " + string)
+                    message?.let {
+                    toastEvent.postValue(it)
+                    }
                 })
             }
         }
