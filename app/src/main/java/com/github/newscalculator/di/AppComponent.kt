@@ -1,9 +1,9 @@
 package com.github.newscalculator.di
 
 import com.github.newscalculator.data.LoadParametersService
+import com.github.newscalculator.data.NavigationDrawerInteraction
 import com.github.newscalculator.di.modules.*
 import com.github.newscalculator.domain.usecases.DiseaseTypeUseCase
-import com.github.newscalculator.domain.usecases.HandleLocalParametersListUseCase
 import com.github.newscalculator.domain.usecases.MainViewModel
 import com.github.newscalculator.domain.usecases.SharedPrefsUseCase
 import com.google.firebase.firestore.FirebaseFirestore
@@ -19,7 +19,8 @@ import javax.inject.Singleton
         LoadingServiceModule::class,
         ViewModelModule::class,
         UseCaseModule::class,
-        DatabaseModule::class
+        DatabaseModule::class,
+        NavigationDrawerModule::class
     ]
 )
 @Singleton
@@ -29,5 +30,5 @@ interface AppComponent {
     fun getMainViewModel(): MainViewModel
     fun getNEWSUseCase(): DiseaseTypeUseCase
     fun getDatabaseReference(): FirebaseFirestore
-    fun getLocalFilesUseCase(): HandleLocalParametersListUseCase
+    fun getNavigationDrawerInteraction(): NavigationDrawerInteraction
 }

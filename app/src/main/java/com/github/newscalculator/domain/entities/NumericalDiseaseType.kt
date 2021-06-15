@@ -1,9 +1,7 @@
 package com.github.newscalculator.domain.entities
 
-import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 
-@JsonClass(generateAdapter = true)
 @Parcelize
 data class NumericalDiseaseType(
     override val id: Long,

@@ -2,7 +2,6 @@ package com.github.newscalculator.domain.entities
 
 import android.os.Parcelable
 import com.github.newscalculator.domain.entities.AbstractDiseaseType.Companion.ARRAY_SIZE
-import com.squareup.moshi.Json
 
 /**
  * Родительский класс типов измеряемых параметров
@@ -22,7 +21,7 @@ import com.squareup.moshi.Json
  * - 1 - булевы параметры (необходимость инсуфляции, изменение сознания)
  */
 abstract class AbstractDiseaseType(
-    @Json(name = "type") val type: EvalTypes,
+    val type: EvalTypes,
 ) : Parcelable {
     companion object {
         fun <T: Number> ArrayList<T>.convertToDoubleArray(): Array<Double> {

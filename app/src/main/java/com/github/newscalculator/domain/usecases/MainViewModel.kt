@@ -1,11 +1,16 @@
 package com.github.newscalculator.domain.usecases
 
+import android.app.Activity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.github.newscalculator.MyApplication
+import com.github.newscalculator.R
 import com.github.newscalculator.data.LoadParametersService
 import com.github.newscalculator.domain.entities.AbstractDiseaseType
 import com.github.newscalculator.util.SingleLiveEvent
+import com.github.newscalculator.util.loggingDebug
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -21,7 +26,8 @@ import kotlinx.coroutines.launch
  */
 
 class MainViewModel(
-    private val loadingService: LoadParametersService
+    private val loadingService: LoadParametersService,
+    private val sharedPrefsUseCase: SharedPrefsUseCase
 ) : ViewModel() {
 
     private val itemsList = MutableLiveData<MutableList<AbstractDiseaseType>>()
@@ -29,6 +35,7 @@ class MainViewModel(
     private val everythingIsEnteredEvent = SingleLiveEvent<Int>()
     private val loadErrorEvent = SingleLiveEvent<Unit>()
     private val toastEvent = SingleLiveEvent<String>()
+    private val showHelloDialogEvent = SingleLiveEvent<Unit>()
 
     val getItemsList: LiveData<MutableList<AbstractDiseaseType>>
         get() = itemsList
@@ -45,10 +52,25 @@ class MainViewModel(
     val getToastEvent: LiveData<String>
         get() = toastEvent
 
+    val getShowHelloDialogEvent: LiveData<Unit>
+        get() = showHelloDialogEvent
+
     private val totalSum: Int
         get() = itemsList.value.orEmpty().sumOf {
             it.getResultPoints()
         }
+
+    private val drawerInteraction = MyApplication.appComponent.getNavigationDrawerInteraction()
+
+    /**
+     * Проверка на первый запуск
+     */
+    fun checkFirstLaunch() {
+        viewModelScope.launch {
+            if (!sharedPrefsUseCase.getHelloDialogShowed())
+                showHelloDialogEvent.postValue(Unit)
+        }
+    }
 
     /**
      * Начальная загрузка таблицы
@@ -56,7 +78,7 @@ class MainViewModel(
     fun getItemsList() {
         if (itemsList.value == null) {
             CoroutineScope(Dispatchers.IO).launch {
-                loadingService.loadParameters(onLoadParameters = {list, message ->
+                loadingService.loadParameters(onLoadParameters = { list, message ->
                     itemsList.postValue(list)
                     message?.let {
                         toastEvent.postValue(it)
@@ -64,11 +86,11 @@ class MainViewModel(
                 }, onFailLoad = { list, message ->
                     list?.let {
                         itemsList.postValue(it)
-                    }?: kotlin.run {
+                    } ?: kotlin.run {
                         loadErrorEvent.postValue(Unit)
                     }
                     message?.let {
-                    toastEvent.postValue(it)
+                        toastEvent.postValue(it)
                     }
                 })
             }
@@ -120,5 +142,17 @@ class MainViewModel(
             if (currentItem.isModified.not()) return
         }
         everythingIsEnteredEvent.postValue(totalSum)
+    }
+
+    fun handleDrawerLayoutAction(itemId: Int, activity: Activity) {
+        drawerInteraction.apply {
+            when (itemId) {
+                R.id.support_Share -> shareApp(activity)
+                R.id.support_Rate -> rateApp(activity)
+                R.id.support_Feedback -> reportBug(activity)
+                R.id.support_Help -> showHelloDialogEvent.postValue(Unit)
+                else -> loggingDebug("unknown id")
+            }
+        }
     }
 }

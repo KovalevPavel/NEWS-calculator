@@ -2,7 +2,6 @@ package com.github.newscalculator.di.modules
 
 import android.app.Application
 import com.github.newscalculator.domain.usecases.DiseaseTypeUseCase
-import com.github.newscalculator.domain.usecases.HandleLocalParametersListUseCase
 import com.github.newscalculator.domain.usecases.SharedPrefsUseCase
 import dagger.Module
 import dagger.Provides
@@ -17,7 +16,4 @@ class UseCaseModule {
 
     @Provides
     fun provideSPrefsUseCase(context: Application) = SharedPrefsUseCase(context)
-
-    @Provides
-    fun provideHandleLocalFilesUseCase(context: Application) = HandleLocalParametersListUseCase(context)
 }

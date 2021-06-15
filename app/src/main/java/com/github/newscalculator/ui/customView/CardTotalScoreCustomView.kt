@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import androidx.core.content.res.ResourcesCompat
 import com.github.newscalculator.R
 import com.github.newscalculator.databinding.ViewTotalScoreBinding
+import com.github.newscalculator.util.loggingDebug
 import com.google.android.material.card.MaterialCardView
 
 /**
@@ -17,7 +18,7 @@ class CardTotalScoreCustomView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : MaterialCardView(context, attrs, defStyleAttr) {
-    var customBinder: ViewTotalScoreBinding =
+    private val customBinder: ViewTotalScoreBinding =
         ViewTotalScoreBinding.inflate(LayoutInflater.from(context))
 
     init {
@@ -41,16 +42,15 @@ class CardTotalScoreCustomView @JvmOverloads constructor(
         val lastIndex = customBinder.textTotalValue.text.indexOfFirst {
             it == '/'
         }
-
         val inputParameter =
             try {
-                customBinder.textTotalValue.text.subSequence(0, lastIndex - 1).toString().toInt()
+                customBinder.textTotalValue.text.subSequence(0, lastIndex).toString().toInt()
             } catch (e: Exception) {
                 20
             }
+        loggingDebug("input parameter -> $inputParameter")
         val color = when (inputParameter) {
-            in (0 until 3) -> R.color.green
-            in (3 until 6) -> R.color.yellow
+            in (0 until 19) -> R.color.blue
             else -> R.color.red
         }
         customBinder.textTotalValue.setTextColor(

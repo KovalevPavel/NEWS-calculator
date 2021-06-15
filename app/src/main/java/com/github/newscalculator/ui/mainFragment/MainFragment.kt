@@ -13,12 +13,12 @@ import com.github.newscalculator.databinding.FragmentMainBinding
 import com.github.newscalculator.domain.entities.AbstractDiseaseType
 import com.github.newscalculator.domain.usecases.MainViewModel
 import com.github.newscalculator.domain.usecases.MyViewModelFactory
+import com.github.newscalculator.ui.helloDialog.DialogHello
 import com.github.newscalculator.ui.mainFragment.recyclerView.Decoration
 import com.github.newscalculator.ui.mainFragment.recyclerView.DiseaseAdapter
 import com.github.newscalculator.ui.retryDialog.DialogRetry
 import com.github.newscalculator.util.AutoClearedValue
 import com.github.newscalculator.util.FragmentViewBinding
-import com.github.newscalculator.util.loggingDebug
 import com.github.newscalculator.util.showToast
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +31,7 @@ class MainFragment :
     private var diseaseAdapter by AutoClearedValue<DiseaseAdapter>()
 
     private val retryDialog = DialogRetry()
+    private val helloDialog = DialogHello()
 
     private val mainViewModel: MainViewModel by viewModels {
         MyViewModelFactory()
@@ -43,6 +44,7 @@ class MainFragment :
         initUI()
         initToolbar()
         initNavigationView()
+        mainViewModel.checkFirstLaunch()
         loadData()
     }
 
@@ -86,6 +88,8 @@ class MainFragment :
 
     private fun initUI() {
         if (retryDialog.isAdded) retryDialog.dismiss()
+        if (helloDialog.isAdded) helloDialog.dismiss()
+
         diseaseAdapter = DiseaseAdapter(onItemClick = { position ->
             translateItemIdIntoDialog(position)
         }, onItemLongClick = { position ->
@@ -158,6 +162,10 @@ class MainFragment :
                 retryDialog.show(childFragmentManager, null)
             }
 
+            getShowHelloDialogEvent.observe(viewLifecycleOwner) {
+                helloDialog.show(childFragmentManager, null)
+            }
+
             getToastEvent.observe(viewLifecycleOwner) { toastString ->
                 showToast(requireContext(), toastString)
             }
@@ -184,20 +192,14 @@ class MainFragment :
     override fun doOnRetry() = loadData()
 
     override fun onStop() {
-//        убиваем диалог, если пользователь так и не загрузил данные
+//        убиваем диалоги, если пользователь их не скрыл
         if (retryDialog.isAdded) retryDialog.dismissAllowingStateLoss()
+        if (helloDialog.isAdded) helloDialog.dismissAllowingStateLoss()
         super.onStop()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        val string = when (item.itemId) {
-            R.id.support_Feedback -> "feedback"
-            R.id.support_Rate -> "rate"
-            R.id.support_Help -> "help"
-            R.id.support_Share -> "share"
-            else -> "wrong"
-        }
-        loggingDebug("support menu item: $string")
+        mainViewModel.handleDrawerLayoutAction(item.itemId, requireActivity())
         return true
     }
 }

@@ -7,7 +7,6 @@ import com.github.newscalculator.data.LoadParametersService
 import com.github.newscalculator.data.remote.ParametersLoadRemote.Companion.REFRESH_DELAY
 import com.github.newscalculator.domain.entities.*
 import com.github.newscalculator.domain.usecases.SharedPrefsUseCase
-import com.github.newscalculator.util.loggingDebug
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
@@ -61,21 +60,14 @@ class ParametersLoadRemote(
                                 sPrefsUseCase.resetUpdateTime()
                                 val remoteItems = handleDataFromDatabase(remoteData)
                                 val string = context.getString(R.string.synchronized_successful)
-                                loggingDebug("updated: ")
-                                loggingDebug(string)
                                 onLoadParameters(remoteItems, string)
                             }
                         }, {
                             val string = context.getString(R.string.lastLocalLoaded)
-                            loggingDebug("last saved:")
-                            loggingDebug(string)
                             onFailLoad(handleDataFromDatabase(itemsList), string)
                         })
                     } else {
-                        val string = context.getString(R.string.synchronized_successful)
-                        loggingDebug("no update: ")
-                        loggingDebug(string)
-                        onLoadParameters(handleDataFromDatabase(itemsList), string)
+                        onLoadParameters(handleDataFromDatabase(itemsList), null)
                     }
                 }
             }

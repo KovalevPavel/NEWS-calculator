@@ -10,8 +10,11 @@ class SharedPrefsUseCase(private val context: Application) {
     companion object {
         private const val PREFS_NAME = "news_shared_prefs"
         private const val LAST_TIMESTAMP = "last_timestamp"
-        private const val DB_VERSION = "dbVersion"
-        private const val NETWORK_AVAILABLE = "network"
+        private const val HELLO_DIALOG_SHOWED = "hello_dialog"
+    }
+
+    private fun getSharedPrefs(): SharedPreferences {
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     }
 
     suspend fun getLastLaunchTime(): Long {
@@ -28,35 +31,19 @@ class SharedPrefsUseCase(private val context: Application) {
         }
     }
 
-    suspend fun getCurrentDbVersion(): Long {
+    suspend fun getHelloDialogShowed(): Boolean {
         return withContext(Dispatchers.IO) {
-            getSharedPrefs().getLong(DB_VERSION, 0L)
+            val dialogShowed = getSharedPrefs().getBoolean(HELLO_DIALOG_SHOWED, false)
+            if (!dialogShowed) setHelloDialogShowed(true)
+            dialogShowed
         }
     }
 
-    suspend fun updateDbVersion(newDbVersion: Long) {
+    private suspend fun setHelloDialogShowed(showed: Boolean) {
         withContext(Dispatchers.IO) {
             getSharedPrefs().edit()
-                .putLong(DB_VERSION, newDbVersion)
+                .putBoolean(HELLO_DIALOG_SHOWED, showed)
                 .apply()
         }
-    }
-
-    suspend fun getNetworkState(): Boolean {
-        return withContext(Dispatchers.IO) {
-            getSharedPrefs().getBoolean(NETWORK_AVAILABLE, false)
-        }
-    }
-
-    suspend fun updateNetworkState(state: Boolean) {
-        withContext(Dispatchers.IO) {
-            getSharedPrefs().edit()
-                .putBoolean(NETWORK_AVAILABLE, state)
-                .apply()
-        }
-    }
-
-    private fun getSharedPrefs(): SharedPreferences {
-        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     }
 }
