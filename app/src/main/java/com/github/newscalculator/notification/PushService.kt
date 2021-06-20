@@ -28,7 +28,6 @@ class PushService : FirebaseMessagingService() {
         super.onMessageReceived(newMessage)
         val messageData = newMessage.data
         showMessageNotification(messageData)
-        loggingDebug("received")
     }
 
     private fun showMessageNotification(messageData: Map<String, String>) {

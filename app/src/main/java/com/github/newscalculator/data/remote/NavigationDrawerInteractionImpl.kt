@@ -50,10 +50,6 @@ class NavigationDrawerInteractionImpl : NavigationDrawerInteraction {
         }
     }
 
-    override fun requestHelp() {
-        TODO("Not yet implemented")
-    }
-
     override fun reportBug(activity: Activity) {
         CoroutineScope(Dispatchers.IO).launch {
             val intent = Intent(Intent.ACTION_SENDTO).apply {
