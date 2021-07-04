@@ -11,8 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.newscalculator.R
 import com.github.newscalculator.databinding.FragmentMainBinding
 import com.github.newscalculator.domain.entities.AbstractDiseaseType
-import com.github.newscalculator.domain.usecases.MainViewModel
-import com.github.newscalculator.domain.usecases.MyViewModelFactory
 import com.github.newscalculator.ui.helloDialog.DialogHello
 import com.github.newscalculator.ui.mainFragment.recyclerView.Decoration
 import com.github.newscalculator.ui.mainFragment.recyclerView.DiseaseAdapter
@@ -21,9 +19,11 @@ import com.github.newscalculator.util.AutoClearedValue
 import com.github.newscalculator.util.FragmentViewBinding
 import com.github.newscalculator.util.showToast
 import com.google.android.material.navigation.NavigationView
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainFragment :
     FragmentViewBinding<FragmentMainBinding>(FragmentMainBinding::inflate),
     ConnectionToDialog, ConnectionToRetryDialog, NavigationView.OnNavigationItemSelectedListener {
@@ -33,9 +33,7 @@ class MainFragment :
     private val retryDialog = DialogRetry()
     private val helloDialog = DialogHello()
 
-    private val mainViewModel: MainViewModel by viewModels {
-        MyViewModelFactory()
-    }
+    private val mainViewModel: MainViewModel by viewModels()
 
     override var allowToCallDialog = true
 

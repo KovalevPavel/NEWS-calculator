@@ -8,8 +8,8 @@ import android.view.LayoutInflater
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
-import com.github.newscalculator.MyApplication
 import com.github.newscalculator.databinding.DialogEditValueBinding
 import com.github.newscalculator.domain.entities.AbstractDiseaseType
 import com.github.newscalculator.domain.entities.CheckableDiseaseType
@@ -32,8 +32,8 @@ import com.github.newscalculator.util.truncation
  * @property parentEntity Объект, который вызвал данный диалог (активити или фрагмент)
  */
 class EditValueDialog : DialogFragment() {
-    private val newsUseCase = MyApplication.appComponent.getNEWSUseCase()
     private val args: EditValueDialogArgs by navArgs()
+    private val editViewModel: EditValueViewModel by viewModels()
     private lateinit var inputDiseaseParameter: AbstractDiseaseType
     private lateinit var dialogContentType: DialogContent
 
@@ -107,11 +107,17 @@ class EditValueDialog : DialogFragment() {
         if (inputDiseaseParameter is CheckableDiseaseType) return
         binder.apply {
             //утсанавливаем текст (если он ранее уже был введен)
-            editTextNumberSigned.setText(newsUseCase.convertEvalValue(inputDiseaseParameter))
+            editViewModel.convertValue(inputDiseaseParameter)
             //показываем клавиатуру
             editTextNumberSigned.requestFocus()
             editTextNumberSigned.setSelection(0, editTextNumberSigned.text?.length ?: 0)
             dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        }
+    }
+
+    private fun bindViewModel() {
+        editViewModel.getInputText.observe(viewLifecycleOwner) { convertedString ->
+            binder.editTextNumberSigned.setText(convertedString)
         }
     }
 
